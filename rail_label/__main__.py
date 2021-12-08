@@ -36,7 +36,7 @@ def main():
     # Object representing a labeling junk dataset
     dataset = DataSet(data_set_path)
     if not dataset:
-        print(f'Dataset in directory "{str(data_set_path)}" is empty.')
+        print(f'Dataset in directory "{str(data_set_path.absolute())}" is empty.')
         return
 
     # Main window
