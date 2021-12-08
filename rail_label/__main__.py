@@ -1,21 +1,44 @@
 import cv2
 import pathlib
+import argparse
 
 from rail_label.utils.utils import Mouse
 from rail_label.utils.data_set import DataSet
 from rail_label.labeling.scene import Scene
 
 
-def main():
-    pth = "/home/flo/mlserver/data/hofstetter_data/deleteme/measurement_2021-04-29_010/"
-    data_set_path = pathlib.Path(pth)
+def parse_args(parser: argparse.ArgumentParser):
+    """
+    Parse CLI arguments.
 
+    :param parser: Argument parser Object.
+    :return: CLI Arguments object.
+    """
+    parser.add_argument(
+        "dataset_path",
+        type=str,
+        help="Path to the directory containing a dataset.",
+        default="."
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    # Parse arguments from cli
+    parser = argparse.ArgumentParser()
+    args = parse_args(parser)
+
+    # Path parameters
+    data_set_path = pathlib.Path(args.dataset_path)
+
+    # Object representing a labeling junk dataset
     dataset = DataSet(data_set_path)
 
     # Main window
     window_name = "image"
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    # Mouse on main window
+    # Mouse object handling callbacks on main window
     mouse = Mouse()
     cv2.setMouseCallback(window_name, mouse.mouse_callback)
 
