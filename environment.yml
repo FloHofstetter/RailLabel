@@ -1,0 +1,8 @@
+name: labeltool
+channels:
+dependencies:
+  - pip:
+    - opencv-python
+    - numpy
+    - tabulate
+    - splines
