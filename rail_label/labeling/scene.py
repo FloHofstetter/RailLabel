@@ -28,7 +28,7 @@ class Scene:
         else:
             first_track = next(iter(self._tracks.values()))
             self._activate_track(first_track.get_id())
-        self._track_polifill = False
+        self._track_polifill = True
 
 
     def show(self):
