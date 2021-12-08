@@ -15,10 +15,10 @@ def parse_args(parser: argparse.ArgumentParser):
     :return: CLI Arguments object.
     """
     parser.add_argument(
-        "dataset_path",
+        "-d",
+        "--dataset_path",
         type=str,
         help="Path to the directory containing a dataset.",
-        required=False,
         default="."
     )
 
