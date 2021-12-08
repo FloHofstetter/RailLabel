@@ -18,6 +18,7 @@ def parse_args(parser: argparse.ArgumentParser):
         "dataset_path",
         type=str,
         help="Path to the directory containing a dataset.",
+        required=False,
         default="."
     )
 
