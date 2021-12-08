@@ -47,6 +47,11 @@ class Track:
             "centerpoint": (255, 0, 0),
             "rightrail": (0, 0, 255),
         }
+        self.track_position_to_color: dict = {
+            "ego": (58, 197, 197),
+            "left": (0, 153, 255),
+            "right": (58, 197, 58),
+        }
         rel_positions = ["left", "ego", "right"]
         if rel_pos not in rel_positions:
             msg = f"Expected rel_pos to be in {rel_positions}, got {rel_pos}"
@@ -228,9 +233,15 @@ class Track:
             points = np.expand_dims(points, axis=0)
             points = points.astype(np.int32)
             if fill:
-                cv2.fillConvexPoly(img, points, self.rail_to_color[rail])
+                if rail == "centerpoint":
+                    cv2.fillConvexPoly(img, points, self.track_position_to_color[self.rel_pos])
+                else:
+                    cv2.fillConvexPoly(img, points, self.rail_to_color[rail])
             else:
-                cv2.polylines(img, points, True, self.rail_to_color[rail], thickness=3)
+                if rail == "centerpoint":
+                    cv2.polylines(img, points, True, self.track_position_to_color[self.rel_pos], thickness=3)
+                else:
+                    cv2.polylines(img, points, True, self.rail_to_color[rail], thickness=3)
         return img
 
     def _draw(self, img, track_points, c_size=5, c_thickness=-1):

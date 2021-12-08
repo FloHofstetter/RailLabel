@@ -30,7 +30,6 @@ class Scene:
             self._activate_track(first_track.get_id())
         self._track_polifill = True
 
-
     def show(self):
         img = self._image.copy()
         img = self._stencil.draw(img).copy()
