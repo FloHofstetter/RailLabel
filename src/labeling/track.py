@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import splines
 
-from utils.camera import Camera
+from src.utils.camera import Camera
 
 
 class Track:
@@ -75,7 +75,6 @@ class Track:
             points = np.array(points)
             points = points.reshape(-1, 2).tolist()
             rail_points[rail] = points
-            print(points)
         self._rail_points = rail_points
 
     def recalculation_needed(self):

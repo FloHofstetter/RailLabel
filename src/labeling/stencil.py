@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from utils import Camera, Mouse
+from src.utils import Camera, Mouse
 
 
 class Stencil:

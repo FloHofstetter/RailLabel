@@ -1,8 +1,9 @@
 import cv2
 import pathlib
 
-from utils import Mouse, DataSet
-from labeling.scene import Scene
+from src.utils.utils import Mouse
+from src.utils.data_set import DataSet
+from src.labeling.scene import Scene
 
 
 def main():
