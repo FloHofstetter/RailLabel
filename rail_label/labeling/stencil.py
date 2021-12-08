@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.utils import Camera, Mouse
+from rail_label.utils import Camera, Mouse
 
 
 class Stencil:

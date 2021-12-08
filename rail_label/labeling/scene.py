@@ -1,10 +1,10 @@
 import cv2
 import tabulate
 
-from src.labeling.stencil import Stencil
-from src.labeling.track import Track
+from rail_label.labeling.stencil import Stencil
+from rail_label.labeling.track import Track
 
-from src.utils.camera import Camera
+from rail_label.utils.camera import Camera
 
 
 class Scene:

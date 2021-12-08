@@ -13,7 +13,7 @@ LONG_DESCRIPTION = 'A package that allows to annotate complex scenes on video im
 
 # Setting up
 setup(
-    name="rail-label",
+    name="rail_label",
     version=VERSION,
     author="Florian Hofstetter",
     author_email="<flo.max.hofstetter@gmail.com>",

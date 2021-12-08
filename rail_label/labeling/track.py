@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import splines
 
-from src.utils.camera import Camera
+from rail_label.utils.camera import Camera
 
 
 class Track:
