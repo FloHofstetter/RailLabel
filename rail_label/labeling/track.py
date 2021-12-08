@@ -104,7 +104,8 @@ class Track:
         # Need recalculation of derived information
         self.recalculation_needed()
         self._rail_points["leftrail"].append(point[0])
-        self._rail_points["rightrail"].append(point[1])
+        self._rail_points["centerpoint"].append(point[1])
+        self._rail_points["rightrail"].append(point[2])
         # Sort all points for all rails by y-value (second)
         for name in self._rail_points:
             self._rail_points[name] = sorted(self._rail_points[name], key=lambda x: x[1], reverse=False)

@@ -18,6 +18,7 @@ class Stencil:
         self._camera = camera
         self._mouse = mouse
         self._left_rail_point = 0
+        self._center_rail_point = 1
         self._right_rail_point = 1
         # Width between crosshair circles on rails.
         self._width = 1
@@ -76,9 +77,13 @@ class Stencil:
             msg = "Expected mode to be 'aim_left_rail' "
             msg += f"or 'aim_right_rail', got {self._mode}"
             raise ValueError(msg)
+        # Center is in the middle ether way
+        center_rail_point = np.mean((self._left_rail_point, self._right_rail_point), axis=0)
+        # Round to full pixel
+        self._center_rail_point = np.rint(center_rail_point).astype(int)
 
     def get_rail_points(self):
-        return self._left_rail_point, self._right_rail_point
+        return self._left_rail_point, self._center_rail_point, self._right_rail_point
 
     def draw(self, img):
         """

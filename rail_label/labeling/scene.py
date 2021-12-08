@@ -117,15 +117,15 @@ class Scene:
 
         :return: None.
         """
-        for track in self._tracks.values():
-            track.draw_splines(img, 10)
+        # for track in self._tracks.values():
+            # track.draw_splines(img, 10)
         for track in self._tracks.values():
             track.draw_points(img)
         # TODO: We can do that prettier:
         for track in self._tracks.values():
             track.calculate_wire_grid_points(camera)
-        for track in self._tracks.values():
-            track.draw_wire_grid_points(img)
+        # for track in self._tracks.values():
+            # track.draw_wire_grid_points(img)
         alpha = 0.20
         img_c = img.copy()
         for track in self._tracks.values():
