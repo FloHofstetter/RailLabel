@@ -3,7 +3,6 @@ import tabulate
 
 from rail_label.labeling.stencil import Stencil
 from rail_label.labeling.track import Track
-
 from rail_label.utils.camera import Camera
 
 
