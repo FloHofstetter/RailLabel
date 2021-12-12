@@ -9,14 +9,12 @@ class Stencil:
     Represents the stencil to aim for both rails.
 
     """
-    def __init__(self, camera: Camera, mouse: Mouse):
+    def __init__(self):
         """
 
         :param camera: Camera class calculating pixel/world coordinates.
         :param mouse: Mouse class to handle input.
         """
-        self._camera = camera
-        self._mouse = mouse
         self._left_rail_point = 0
         self._center_rail_point = 1
         self._right_rail_point = 1
@@ -24,8 +22,18 @@ class Stencil:
         self._width = 1
         # Manually correct stencil width
         self._width_correction = 0
+        # Manually change stencil angle
+        self._angle_correction = 0
         # Stencil aiming mode
         self._mode = "aim_left_rail"
+
+    @property
+    def left_rail_point(self):
+        return self._left_rail_point
+
+    @property
+    def right_rail_point(self):
+        return self._right_rail_point
 
     def set_width_correction(self, correction: int):
         """
@@ -50,16 +58,24 @@ class Stencil:
         """
         self._width = width if width > 0 else 1
 
-    def _calculate_rail_points(self):
+    @property
+    def angle_correction(self):
+        return self._angle_correction
+
+    @angle_correction.setter
+    def angle_correction(self, angle_correction):
+        self._angle_correction = angle_correction
+
+    def calculate_rail_points(self, camera, mouse):
         """
         Calculate the points on witch the stencil aims.
 
         :return: None
         """
-        l_rail_px = self._mouse.position
-        l_rail_wd = self._camera.pixel_to_world(l_rail_px)
+        l_rail_px = mouse.position
+        l_rail_wd = camera.pixel_to_world(l_rail_px)
         r_rail_wd = l_rail_wd + np.array([1502, 0, 0])
-        r_rail_px = self._camera.world_to_pixel(r_rail_wd)
+        r_rail_px = camera.world_to_pixel(r_rail_wd)
         width = r_rail_px[0] - l_rail_px[0]
         width = width if width > 0 else 1
         width += self._width_correction
@@ -67,12 +83,18 @@ class Stencil:
 
         # Free circle is on the right
         if self._mode == "aim_left_rail":
-            self._left_rail_point = self._mouse.position
+            self._left_rail_point = list(mouse.position)
+            # Shift stencil to the left for better view
+            self._left_rail_point[0] += 50
             self._right_rail_point = (self._left_rail_point[0] + self._width, self._left_rail_point[1])
+            self._right_rail_point = np.rint(self.rotate(self.angle_correction, self._left_rail_point, self._right_rail_point)).astype(int).tolist()
         # Free circle is on the left
         elif self._mode == "aim_right_rail":
-            self._right_rail_point = self._mouse.position
+            self._right_rail_point = list(mouse.position)
+            # Shift stencil to the right for better view
+            self._right_rail_point[0] -= 50
             self._left_rail_point = (self._right_rail_point[0] - self._width, self._right_rail_point[1])
+            self._left_rail_point = np.rint(self.rotate(self.angle_correction, self._right_rail_point, self._left_rail_point)).astype(int).tolist()
         else:
             msg = "Expected mode to be 'aim_left_rail' "
             msg += f"or 'aim_right_rail', got {self._mode}"
@@ -92,7 +114,6 @@ class Stencil:
         :param img: Image to draw stencil on.
         :return: None.
         """
-        self._calculate_rail_points()
         # Draw left circle
         center = self._left_rail_point
         radius = 20
@@ -121,8 +142,8 @@ class Stencil:
         cv2.line(img, pt1, pt2, color, thickness)
 
         # Draw line between circles
-        pt1 = [self._right_rail_point[0] - radius, self._right_rail_point[1]]
-        pt2 = [self._left_rail_point[0] + radius, self._left_rail_point[1]]
+        pt1 = [self._right_rail_point[0], self._right_rail_point[1]]
+        pt2 = [self._left_rail_point[0], self._left_rail_point[1]]
         cv2.line(img, pt1, pt2, color, thickness)
         return img
 
@@ -135,3 +156,29 @@ class Stencil:
             self._mode = "aim_right_rail"
         else:
             self._mode = "aim_left_rail"
+
+    def rotate(self, angle, rotate_around, point):
+        s = np.sin(np.deg2rad(angle))
+        c = np.cos(np.deg2rad(angle))
+
+        p = [0, 0]
+        p[0] = point[0] - rotate_around[0]
+        p[1] = point[1] - rotate_around[1]
+
+        r = [0, 0]
+        r[0] = p[0] * c - p[1] * s
+        r[1] = p[0] * s + p[1] * c
+
+        z = [0, 0]
+        z[0] = r[0] + rotate_around[0]
+        z[1] = r[1] + rotate_around[1]
+        return z
+
+def main():
+    a = [2, 1.5]
+    b = [3, 2.5]
+    print(rotate(0, a, b))
+
+
+if __name__ == "__main__":
+    main()

@@ -20,7 +20,6 @@ class Camera:
         self.yaw = np.radians(self.yaw)
         self.center = np.squeeze(self.tvec.T)
 
-
     def _get_rotation_matrix(self):
         # Rotation on y-axis
         r_yaw = np.array(
