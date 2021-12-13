@@ -4,6 +4,7 @@ import cv2
 import pathlib
 import argparse
 import concurrent.futures
+from typing import Iterable, Union
 
 import numpy as np
 
@@ -16,6 +17,7 @@ class SegmentationLabel:
     """
     Generation of segmentation labels.
     """
+
     def __init__(self, data):
         self.image = data["image"]
         self._label = np.zeros(data["image"].shape)
@@ -60,32 +62,64 @@ class SegmentationLabel:
             points_arr: np.ndarray
             # Rails
             for rail in [track.left_rail, track.right_rail]:
-                points = [point.point for point in rail.contour_points(self.scene.camera, 15)]
+                points = []
+                for point in rail.contour_points(self.scene.camera, 15):
+                    points.append(point.point)
                 points_arr = np.array(points).astype(np.int32)
                 if len(points) > 1:
                     if track.relative_position == "ego":
-                        cv2.fillConvexPoly(self._label, points_arr, track_to_color["ego_rails"])
+                        cv2.fillConvexPoly(
+                            self._label,
+                            points_arr,
+                            track_to_color["ego_rails"],
+                        )
                     elif track.relative_position == "left":
-                        cv2.fillConvexPoly(self._label, points_arr, track_to_color["left_rails"])
+                        cv2.fillConvexPoly(
+                            self._label,
+                            points_arr,
+                            track_to_color["left_rails"],
+                        )
                     elif track.relative_position == "right":
-                        cv2.fillConvexPoly(self._label, points_arr, track_to_color["right_rails"])
+                        cv2.fillConvexPoly(
+                            self._label,
+                            points_arr,
+                            track_to_color["right_rails"],
+                        )
             if len(points) > 1:
                 # Trackbed
-                points = [point.point for point in track.track_bed_spline_points(self.scene.camera, 15)]
+                points = []
+                for point in track.track_bed_spline_points(self.scene.camera, 15):
+                    points.append(point.point)
                 points_arr = np.array(points).astype(np.int32)
                 if track.relative_position == "ego":
-                    cv2.fillConvexPoly(self._label, points_arr, track_to_color["ego_bed"])
+                    cv2.fillConvexPoly(
+                        self._label,
+                        points_arr,
+                        track_to_color["ego_bed"],
+                    )
                 elif track.relative_position == "left":
-                    cv2.fillConvexPoly(self._label, points_arr, track_to_color["left_bed"])
+                    cv2.fillConvexPoly(
+                        self._label,
+                        points_arr,
+                        track_to_color["left_bed"],
+                    )
                 elif track.relative_position == "right":
-                    cv2.fillConvexPoly(self._label, points_arr, track_to_color["right_bed"])
+                    cv2.fillConvexPoly(
+                        self._label,
+                        points_arr,
+                        track_to_color["right_bed"],
+                    )
         if color_type == "overlay":
             alpha = 0.5
             cv2.addWeighted(self.image, alpha, self._label, 1 - alpha, 0, self._label)
         return self._label
 
 
-def create_label(data, output_path, color_type="segmentation"):
+def create_label(
+    data: dict,
+    output_path: pathlib.Path,
+    color_type: str = "segmentation",
+) -> None:
     """
 
     :param data:
@@ -94,37 +128,46 @@ def create_label(data, output_path, color_type="segmentation"):
     :return:
     """
     if data["annotations"]:
-        segmentation_label = SegmentationLabel(data)
-        image = segmentation_label.label(color_type)
+        segmentation_label: SegmentationLabel = SegmentationLabel(data)
+        image: np.ndarray = segmentation_label.label(color_type)
         output_path.mkdir(parents=True, exist_ok=True)
+        file_extension: str
         file_extension = ".png" if color_type == "segmentation" else ".jpg"
         output_path = output_path / (data["name"] + file_extension)
         cv2.imwrite(str(output_path), image)
     else:
-        msg = f'No annotations found for "{data["name"]}"'
+        msg: str = f'No annotations found for "{data["name"]}"'
         print(msg)
 
 
-def create_labels(data_set_path, output_path, color_type="segmentation"):
+def create_labels(
+    data_set_path: Union[str, pathlib.Path],
+    output_path: Union[str, pathlib.Path],
+    color_type: str = "segmentation",
+) -> None:
     """
-
-    :param data_set_path:
-    :param output_path:
-    :param color_type:
-    :return:
+    Create segmentation labels / masks for tracks.
+    The 'color_type' parameter selects if the output are colored
+    images masks 'human', overlaid images 'overlay' or
+    segmentation maks 'segmentation'.
+    :param data_set_path: Path to dataset root directory
+    :param output_path: Path to store generated masks / labels
+    :param color_type: Type of masks / labels to generate
+                       ['human', 'overlay', 'segmentation']
     """
     # Get data
-    data_set_path = pathlib.Path(data_set_path)
-    dataset = DataSet(data_set_path)
+    data_set_path: pathlib.Path = pathlib.Path(data_set_path)
+    dataset: DataSet = DataSet(data_set_path)
     if not dataset:
         print(f'Dataset in directory "{str(data_set_path.absolute())}" is empty.')
 
+    arguments: list[Iterable]
     arguments = [dataset, itertools.repeat(output_path), itertools.repeat(color_type)]
     with concurrent.futures.ProcessPoolExecutor() as executor:
         executor.map(create_label, *arguments)
 
 
-def parse_args(parser: argparse.ArgumentParser):
+def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     """
     Parse CLI arguments.
 
@@ -136,25 +179,24 @@ def parse_args(parser: argparse.ArgumentParser):
         "--dataset_path",
         type=str,
         help="Path to the directory containing a dataset.",
-        required=True
+        required=True,
     )
     parser.add_argument(
-        "-o",
-        "--output_path",
-        type=str,
-        help="Path to save the labels.",
-        required=True
+        "-o", "--output_path", type=str, help="Path to save the labels.", required=True
     )
     return parser.parse_args()
 
 
 def main():
     # Parse arguments from cli
-    parser = argparse.ArgumentParser()
-    args = parse_args(parser)
-    data_set_path = pathlib.Path(args.dataset_path)
-    output_path = pathlib.Path(args.output_path)
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    args: argparse.Namespace = parse_args(parser)
 
+    # Get input and output paths
+    data_set_path: pathlib.Path = pathlib.Path(args.dataset_path)
+    output_path: pathlib.Path = pathlib.Path(args.output_path)
+
+    # Create labels
     create_labels(data_set_path, output_path, "overlay")
 
 
