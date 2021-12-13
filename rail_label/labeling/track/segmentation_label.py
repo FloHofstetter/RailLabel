@@ -119,12 +119,14 @@ def create_label(
     data: dict,
     output_path: pathlib.Path,
     color_type: str = "segmentation",
+    verbose=False,
 ) -> None:
     """
 
     :param data:
     :param output_path:
     :param color_type:
+    :param verbose: Verbose std out
     :return:
     """
     if data["annotations"]:
@@ -135,15 +137,18 @@ def create_label(
         file_extension = ".png" if color_type == "segmentation" else ".jpg"
         output_path = output_path / (data["name"] + file_extension)
         cv2.imwrite(str(output_path), image)
+        msg: str = f'Created "{data["name"]}" segmentation label/mask.'
+        print(msg) if verbose else None
     else:
-        msg: str = f'No annotations found for "{data["name"]}"'
-        print(msg)
+        msg: str = f'No annotations found for "{data["name"]}" segmentation label/mask.'
+        print(msg) if verbose else None
 
 
 def create_labels(
     data_set_path: Union[str, pathlib.Path],
     output_path: Union[str, pathlib.Path],
     color_type: str = "segmentation",
+    verbose: bool = False,
 ) -> None:
     """
     Create segmentation labels / masks for tracks.
@@ -154,6 +159,7 @@ def create_labels(
     :param output_path: Path to store generated masks / labels
     :param color_type: Type of masks / labels to generate
                        ['human', 'overlay', 'segmentation']
+    :param verbose: Verbose std out
     """
     # Get data
     data_set_path: pathlib.Path = pathlib.Path(data_set_path)
@@ -162,7 +168,12 @@ def create_labels(
         print(f'Dataset in directory "{str(data_set_path.absolute())}" is empty.')
 
     arguments: list[Iterable]
-    arguments = [dataset, itertools.repeat(output_path), itertools.repeat(color_type)]
+    arguments = [
+        dataset,
+        itertools.repeat(output_path),
+        itertools.repeat(color_type),
+        itertools.repeat(verbose),
+    ]
     with concurrent.futures.ProcessPoolExecutor() as executor:
         executor.map(create_label, *arguments)
 
@@ -178,11 +189,22 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
         "-d",
         "--dataset_path",
         type=str,
-        help="Path to the directory containing a dataset.",
+        help="Path to the directory containing a dataset",
         required=True,
     )
     parser.add_argument(
-        "-o", "--output_path", type=str, help="Path to save the labels.", required=True
+        "-o",
+        "--output_path",
+        type=str,
+        help="Path to save the labels",
+        required=True,
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Verbose std out",
+        action="store_true",
+        required=False,
     )
     return parser.parse_args()
 
@@ -195,9 +217,10 @@ def main():
     # Get input and output paths
     data_set_path: pathlib.Path = pathlib.Path(args.dataset_path)
     output_path: pathlib.Path = pathlib.Path(args.output_path)
+    verbose: bool = args.verbose
 
     # Create labels
-    create_labels(data_set_path, output_path, "overlay")
+    create_labels(data_set_path, output_path, "overlay", verbose)
 
 
 if __name__ == "__main__":
