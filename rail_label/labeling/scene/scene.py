@@ -31,6 +31,14 @@ class Scene:
         self._fill_tracks: bool = True
 
     @property
+    def camera(self):
+        return self._camera
+
+    @property
+    def tracks(self):
+        return self._tracks
+
+    @property
     def fill_tracks(self) -> bool:
         return self._fill_tracks
 
@@ -104,6 +112,14 @@ class Scene:
         :param marks: Draw marks
         :param grid_points: Draw grid
         """
+        track_to_color: dict = {
+            "left_bed": (58, 58, 197),
+            "left_rails": (0, 0, 255),
+            "ego_bed": (58, 197, 197),
+            "ego_rails": (0, 255, 255),
+            "right_bed": (58, 197, 58),
+            "right_rails": (0, 255, 0),
+        }
         track: Track
         # Draw marked points
         if marks:
@@ -144,17 +160,37 @@ class Scene:
                     # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                     points_arr = np.array(points).astype(np.int32)
                     if self.fill_tracks and len(points) > 1:
-                        cv2.fillConvexPoly(grid_polygon_image, points_arr, (0, 0, 255))
+                        if track.relative_position == "ego":
+                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_rails"])
+                        elif track.relative_position == "left":
+                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_rails"])
+                        elif track.relative_position == "right":
+                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_rails"])
                     elif not self.fill_tracks and len(points) > 1:
-                        # Polylines needs list of points https://stackoverflow.com/a/56426368/4835208
-                        cv2.polylines(grid_polygon_image, [points_arr], True, (0, 0, 255), thickness=3)
+                        if track.relative_position == "ego":
+                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_rails"], thickness=3)
+                        elif track.relative_position == "left":
+                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["left_rails"], thickness=3)
+                        elif track.relative_position == "right":
+                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["right_rails"], thickness=3)
                 # Trackbed
                 points = [point.point for point in track.track_bed_spline_points(self._camera, 15)]
                 # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                 points_arr = np.array(points).astype(np.int32)
                 if self.fill_tracks and len(points) > 1:
-                    cv2.fillConvexPoly(grid_polygon_image, points_arr, (0, 255, 0))
+                    if track.relative_position == "ego":
+                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_bed"])
+                    elif track.relative_position == "left":
+                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_bed"])
+                    elif track.relative_position == "right":
+                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_bed"])
                 elif not self.fill_tracks and len(points) > 1:
+                    if track.relative_position == "ego":
+                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_bed"], thickness=3)
+                    elif track.relative_position == "left":
+                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["left_bed"], thickness=3)
+                    elif track.relative_position == "right":
+                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["right_bed"], thickness=3)
                     # Polylines needs list of points https://stackoverflow.com/a/56426368/4835208
                     cv2.polylines(grid_polygon_image, [points_arr], True, (0, 255, 0), thickness=3)
         # Blend track images

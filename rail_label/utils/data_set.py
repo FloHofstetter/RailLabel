@@ -55,7 +55,12 @@ class DataSet:
                 annotation = json.load(file_pointer)
         except FileNotFoundError:
             annotation = None
-        data = {"image": image, "annotations": annotation, "camera_yml": self._camera_yml}
+        data = {
+            "image": image,
+            "name": image_path.stem,
+            "annotations": annotation,
+            "camera_yml": self._camera_yml
+        }
         return data
 
     def write_annotations(self, annotations):
