@@ -29,6 +29,56 @@ class Scene:
         self._image_show: np.ndarray = image
         self._window_name: str = window_name
         self._fill_tracks: bool = True
+        self._tracks_alpha: float = 0.5
+        self._show_tracks_marks = True
+        self._show_tracks_fill = True
+        self._show_tracks_grid = False
+        self._show_tracks_splines = False
+
+    @property
+    def show_tracks_marks(self) -> float:
+        return self._show_tracks_marks
+
+    @show_tracks_marks.setter
+    def show_tracks_marks(self, show_tracks_marks) -> None:
+        self._redraw_tracks = True
+        self._show_tracks_marks = show_tracks_marks
+
+    @property
+    def show_tracks_fill(self) -> float:
+        return self._show_tracks_fill
+
+    @show_tracks_fill.setter
+    def show_tracks_fill(self, show_tracks_fill) -> None:
+        self._redraw_tracks = True
+        self._show_tracks_fill = show_tracks_fill
+
+    @property
+    def show_tracks_grid(self) -> float:
+        return self._show_tracks_grid
+
+    @show_tracks_grid.setter
+    def show_tracks_grid(self, show_tracks_grid) -> None:
+        self._redraw_tracks = True
+        self._show_tracks_grid = show_tracks_grid
+
+    @property
+    def show_tracks_splines(self) -> float:
+        return self._show_tracks_splines
+
+    @show_tracks_splines.setter
+    def show_tracks_splines(self, show_tracks_splines) -> None:
+        self._redraw_tracks = True
+        self._show_tracks_splines = show_tracks_splines
+
+    @property
+    def tracks_alpha(self) -> float:
+        return self._tracks_alpha
+
+    @tracks_alpha.setter
+    def tracks_alpha(self, tracks_alpha) -> None:
+        self._redraw_tracks = True
+        self._tracks_alpha = tracks_alpha
 
     @property
     def camera(self):
@@ -122,7 +172,7 @@ class Scene:
         }
         track: Track
         # Draw marked points
-        if marks:
+        if self._show_tracks_marks:
             marks_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
@@ -132,7 +182,7 @@ class Scene:
                     cv2.circle(marks_image, mark.point, 20, color=(0, 255, 0), thickness=-1)
                 for mark in track.center_points:
                     cv2.circle(marks_image, mark.point, 20, color=(0, 0, 255), thickness=-1)
-        if splines:
+        if self._show_tracks_splines:
             splines_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
@@ -148,7 +198,7 @@ class Scene:
                     cv2.circle(grid_points_image, mark.point, 5, color=(255, 0, 0), thickness=-1)
                 for mark in track.right_rail.contour_points(self._camera, 15):
                     cv2.circle(grid_points_image, mark.point, 5, color=(0, 255, 0), thickness=-1)
-        if grid_polygon:
+        if self.show_tracks_grid or self.show_tracks_fill:
             grid_polygon_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 point: RailPoint
@@ -159,14 +209,14 @@ class Scene:
                     points = [point.point for point in rail.contour_points(self._camera, 15)]
                     # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                     points_arr = np.array(points).astype(np.int32)
-                    if self.fill_tracks and len(points) > 1:
+                    if self.show_tracks_fill and len(points) > 1:
                         if track.relative_position == "ego":
                             cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_rails"])
                         elif track.relative_position == "left":
                             cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_rails"])
                         elif track.relative_position == "right":
                             cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_rails"])
-                    elif not self.fill_tracks and len(points) > 1:
+                    if self.show_tracks_grid and len(points) > 1:
                         if track.relative_position == "ego":
                             cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_rails"], thickness=3)
                         elif track.relative_position == "left":
@@ -177,14 +227,14 @@ class Scene:
                 points = [point.point for point in track.track_bed_spline_points(self._camera, 15)]
                 # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                 points_arr = np.array(points).astype(np.int32)
-                if self.fill_tracks and len(points) > 1:
+                if self.show_tracks_fill and len(points) > 1:
                     if track.relative_position == "ego":
                         cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_bed"])
                     elif track.relative_position == "left":
                         cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_bed"])
                     elif track.relative_position == "right":
                         cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_bed"])
-                elif not self.fill_tracks and len(points) > 1:
+                if self.show_tracks_grid and len(points) > 1:
                     if track.relative_position == "ego":
                         cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_bed"], thickness=3)
                     elif track.relative_position == "left":
@@ -194,12 +244,13 @@ class Scene:
                     # Polylines needs list of points https://stackoverflow.com/a/56426368/4835208
                     cv2.polylines(grid_polygon_image, [points_arr], True, (0, 255, 0), thickness=3)
         # Blend track images
-        # cv2.addWeighted(splines_image, marks_alpha, image, 1 - marks_alpha, 0, image)
+        splines_alpha = self.tracks_alpha
+        cv2.addWeighted(splines_image, splines_alpha, image, 1 - splines_alpha, 0, image) if self._show_tracks_splines else None
         # cv2.addWeighted(grid_points_image, marks_alpha, image, 1 - marks_alpha, 0, image)
-        polygons_alpha = 0.5
-        cv2.addWeighted(grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image)
-        marks_alpha = 0.5
-        cv2.addWeighted(marks_image, marks_alpha, image, 1 - marks_alpha, 0, image)
+        polygons_alpha = self.tracks_alpha
+        cv2.addWeighted(grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image) if self.show_tracks_fill or self.show_tracks_grid else None
+        marks_alpha = self.tracks_alpha
+        cv2.addWeighted(marks_image, marks_alpha, image, 1 - marks_alpha, 0, image) if self._show_tracks_marks else None
 
     def show(self) -> None:
         cv2.imshow(self._window_name, self._image_show)

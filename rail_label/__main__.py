@@ -5,6 +5,7 @@ import argparse
 from rail_label.utils.mouse import Mouse
 from rail_label.utils.data_set import DataSet
 from rail_label.labeling.scene.scene import Scene
+import PySimpleGUI as sg
 
 
 def parse_args(parser: argparse.ArgumentParser):
@@ -25,7 +26,23 @@ def parse_args(parser: argparse.ArgumentParser):
     return parser.parse_args()
 
 
+def configure_settings_window():
+    tracks_marks = sg.Checkbox('Show marks', key='tracks_marks', enable_events=True, default=True)
+    tracks_fill = sg.Checkbox('Fill tracks', key='tracks_fill', enable_events=True, default=True)
+    tracks_grid = sg.Checkbox('Show grid', key='tracks_grid', enable_events=True, default=False)
+    tracks_splines = sg.Checkbox('Show splines', key='tracks_splines', enable_events=True, default=False)
+    layout = [[sg.Text("Output will go here", key="-OUT-")],
+              [sg.Button('Previous'), sg.Button("Next")],
+              [tracks_marks, tracks_fill, tracks_grid, tracks_splines],
+              [sg.Slider(range=(0, 1), resolution=0.1, default_value=0.5, orientation='h', size=(34, 20),
+                         key="transparency", enable_events=True, )],
+              [sg.Button("Exit")]]
+    window = sg.Window("Label-tool settings", layout)
+    return window
+
+
 def main():
+    window = configure_settings_window()
     # Parse arguments from cli
     parser = argparse.ArgumentParser()
     args = parse_args(parser)
@@ -60,12 +77,25 @@ def main():
 
     # main loop
     while True:
+        # GUI events
+        event, values = window.read(timeout=0)
         input_key = cv2.waitKey(1)
-        if input_key == ord("q"):
+
+        if input_key == ord("q") or event == "Exit" or event is None:
             # Save scene and exit program
             cv2.destroyAllWindows()
             dataset.write_annotations(scene.to_dict())
             break
+        elif event == "tracks_marks":
+            scene.show_tracks_marks = values["tracks_marks"]
+        elif event == "tracks_fill":
+            scene.show_tracks_fill = values["tracks_fill"]
+        elif event == "tracks_grid":
+            scene.show_tracks_grid = values["tracks_grid"]
+        elif event == "tracks_splines":
+            scene.show_tracks_splines = values["tracks_splines"]
+        elif event == "transparency":
+            scene.tracks_alpha = values["transparency"]
         elif input_key == ord("s"):
             scene.stencil.toggle_mode()
         elif input_key == ord("d"):
@@ -80,7 +110,7 @@ def main():
             scene.add_double_point()
         elif input_key == ord("r"):
             scene.remove_double_point()
-        elif input_key == ord("n"):
+        elif input_key == ord("n") or event == "Next":
             dataset.write_annotations(scene.to_dict())
             del scene
             data_set_counter += 1
@@ -93,7 +123,7 @@ def main():
             else:
                 scene.add_track("ego")
                 scene.activate_track(0)
-        elif input_key == ord("b"):
+        elif input_key == ord("b") or event == "Previous":
             dataset.write_annotations(scene.to_dict())
             del scene
             data_set_counter -= 1
