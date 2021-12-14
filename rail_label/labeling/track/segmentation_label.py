@@ -163,6 +163,7 @@ def create_labels(
     """
     # Get data
     data_set_path: pathlib.Path = pathlib.Path(data_set_path)
+    output_path: pathlib.Path = pathlib.Path(output_path)
     dataset: DataSet = DataSet(data_set_path)
     if not dataset:
         print(f'Dataset in directory "{str(data_set_path.absolute())}" is empty.')
