@@ -21,7 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=["opencv-python", "numpy", "tabulate", "splines"],
+    install_requires=["opencv-python", "numpy", "tabulate", "splines", "iteration-utilities"],
     keywords=['python', 'video', 'railway', 'rail', 'train', 'labeling'],
     classifiers=[
         "Development Status :: 1 - Planning",
