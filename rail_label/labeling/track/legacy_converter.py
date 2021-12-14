@@ -40,7 +40,7 @@ class LegacyConverter:
         track_position_converter: dict = {
             "ego track": "ego",
             "left neighbors": "left",
-            "right neighbours": "right",
+            "right neighbors": "right",
         }
         with open(self._old_label_path) as file_pointer:
             self._old_labels = json.load(file_pointer)
