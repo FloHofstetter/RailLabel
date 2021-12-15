@@ -1,5 +1,5 @@
 <div align="center">
-<img src="images/RailLabel.svg">
+<img src="images/RailLabel.png">
 </div>
 
 ## Installation
