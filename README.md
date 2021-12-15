@@ -1,5 +1,6 @@
-# labeltool
-Tool to annotate video images on rail roads.
+<div align="center">
+<img src="images/RailLabel.svg">
+</div>
 
 ## Installation
 Label tool can be installed in multiple ways.
