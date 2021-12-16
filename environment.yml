@@ -7,3 +7,5 @@ dependencies:
     - tabulate
     - splines
     - iteration-utilities
+    - PySimpleGUI
+    - setuptools

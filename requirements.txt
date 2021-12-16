@@ -3,3 +3,5 @@ numpy
 tabulate
 splines
 iteration-utilities
+PySimpleGUI
+setuptools
