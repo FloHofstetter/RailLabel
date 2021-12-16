@@ -32,6 +32,7 @@ class DataSet:
         self._images_paths = sorted(self._images_paths)
         # Path to directory with annotations
         self._json_path = self._dataset_path / "annotations"
+        self._json_path.mkdir(parents=True, exist_ok=True)
         self._camera_yml = self._dataset_path / "camera" / "camera.yaml"
 
     def __len__(self):
