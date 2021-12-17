@@ -1,3 +1,5 @@
+import itertools
+
 import cv2
 import pathlib
 import argparse
@@ -145,7 +147,10 @@ def main():
         elif input_key == ord("n") or event == "Next":
             dataset.write_annotations(scene.to_dict())
             del scene
-            data_set_counter += 1
+            if data_set_counter < len(dataset) - 1:
+                data_set_counter += 1
+            else:
+                data_set_counter = 0
             image = dataset[data_set_counter]["image"]
             annotations = dataset[data_set_counter]["annotations"]
             camera_yml = dataset[data_set_counter]["camera_yml"]
@@ -155,10 +160,19 @@ def main():
             else:
                 scene.add_track("ego")
                 scene.activate_track(0)
+            scene.tracks_mode = True if values["mode.tab"] == "track.tab" else False
+            scene.switches_mode = True if values["mode.tab"] == "switch.tab" else False
+            switch_list = [switch for switch in scene.switches.values()]
+            window["switch.active.switch"].update(switch_list)
+            track_list = [track for track in scene.tracks.values()]
+            window["track.active.track"].update(track_list)
         elif input_key == ord("b") or event == "Previous":
             dataset.write_annotations(scene.to_dict())
             del scene
-            data_set_counter -= 1
+            if data_set_counter > 0:
+                data_set_counter -= 1
+            else:
+                data_set_counter = len(dataset) - 1
             image = dataset[data_set_counter]["image"]
             annotations = dataset[data_set_counter]["annotations"]
             camera_yml = dataset[data_set_counter]["camera_yml"]
@@ -168,6 +182,12 @@ def main():
             else:
                 scene.add_track("ego")
                 scene.activate_track(0)
+            scene.tracks_mode = True if values["mode.tab"] == "track.tab" else False
+            scene.switches_mode = True if values["mode.tab"] == "switch.tab" else False
+            switch_list = [switch for switch in scene.switches.values()]
+            window["switch.active.switch"].update(switch_list)
+            track_list = [track for track in scene.tracks.values()]
+            window["track.active.track"].update(track_list)
         elif input_key == ord("x"):
             if scene.tracks_mode:
                 track_id: int = scene.add_track("ego")
