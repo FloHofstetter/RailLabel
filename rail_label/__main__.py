@@ -5,7 +5,7 @@ import argparse
 from rail_label.utils.mouse import Mouse
 from rail_label.utils.data_set import DataSet
 from rail_label.labeling.scene.scene import Scene
-import PySimpleGUI as sg
+from rail_label.labeling.gui.simple_gui import settings_window
 
 
 def parse_args(parser: argparse.ArgumentParser):
@@ -22,27 +22,12 @@ def parse_args(parser: argparse.ArgumentParser):
         help="Path to the directory containing a dataset.",
         default="."
     )
-
     return parser.parse_args()
 
 
-def configure_settings_window():
-    tracks_marks = sg.Checkbox('Show marks', key='tracks_marks', enable_events=True, default=True)
-    tracks_fill = sg.Checkbox('Fill tracks', key='tracks_fill', enable_events=True, default=True)
-    tracks_grid = sg.Checkbox('Show grid', key='tracks_grid', enable_events=True, default=False)
-    tracks_splines = sg.Checkbox('Show splines', key='tracks_splines', enable_events=True, default=False)
-    layout = [[sg.Text("Output will go here", key="-OUT-")],
-              [sg.Button('Previous'), sg.Button("Next")],
-              [tracks_marks, tracks_fill, tracks_grid, tracks_splines],
-              [sg.Slider(range=(0, 1), resolution=0.1, default_value=0.5, orientation='h', size=(34, 20),
-                         key="transparency", enable_events=True, )],
-              [sg.Button("Exit")]]
-    window = sg.Window("Label-tool settings", layout)
-    return window
-
-
 def main():
-    window = configure_settings_window()
+    # Show settings window
+    window = settings_window()
     # Parse arguments from cli
     parser = argparse.ArgumentParser()
     args = parse_args(parser)
@@ -86,6 +71,47 @@ def main():
             cv2.destroyAllWindows()
             dataset.write_annotations(scene.to_dict())
             break
+        elif event == "track.new":
+            if values["track.relpos.left"]:
+                scene.add_track("left")
+            elif values["track.relpos.ego"]:
+                scene.add_track("ego")
+            elif values["track.relpos.right"]:
+                scene.add_track("right")
+            track_list = [track for track in scene.tracks.values()]
+            window["track.active.track"].update(track_list)
+        elif event == "track.del":
+            if values["track.active.track"]:
+                track_id = values["track.active.track"][0].id
+                scene.activate_track(track_id)
+                scene.del_track(track_id)
+                track_list = [track for track in scene.tracks.values()]
+                window["track.active.track"].update(track_list)
+        elif event == "switch.del":
+            if values["switch.active.switch"]:
+                switch_id = values["switch.active.switch"][0].id
+                scene.activate_switch(switch_id)
+                scene.del_switch(switch_id)
+                switch_list = [switch for switch in scene.switches.values()]
+                window["switch.active.switch"].update(switch_list)
+        elif event == "switch.new":
+            kind = True if values['switch.kind.fork'] else False
+            direction = True if values["switch.direction.right"] else False
+            state = True if values["switch.state.on"] else False
+            scene.add_switch(kind, direction, state)
+            track_list = [switch for switch in scene.switches.values()]
+            window["switch.active.switch"].update(track_list)
+        elif event == "switch.active.switch":
+            if values["switch.active.switch"]:
+                switch_id = values["switch.active.switch"][0].id
+                scene.activate_switch(switch_id)
+        elif event == "mode.tab":
+            scene.tracks_mode = True if values["mode.tab"] == "track.tab" else False
+            scene.switches_mode = True if values["mode.tab"] == "switch.tab" else False
+            switch_list = [switch for switch in scene.switches.values()]
+            window["switch.active.switch"].update(switch_list)
+            track_list = [track for track in scene.tracks.values()]
+            window["track.active.track"].update(track_list)
         elif event == "tracks_marks":
             scene.show_tracks_marks = values["tracks_marks"]
         elif event == "tracks_fill":
@@ -97,19 +123,25 @@ def main():
         elif event == "transparency":
             scene.tracks_alpha = values["transparency"]
         elif input_key == ord("s"):
-            scene.stencil.toggle_mode()
+            scene.stencil.toggle_mode() if scene.tracks_mode else None
         elif input_key == ord("d"):
-            scene.stencil.set_width_correction(1)
+            scene.stencil.set_width_correction(1) if scene.tracks_mode else None
         elif input_key == ord("a"):
-            scene.stencil.set_width_correction(-1)
+            scene.stencil.set_width_correction(-1) if scene.tracks_mode else None
         elif input_key == ord("-"):
-            scene.stencil.angle_correction -= 1
+            scene.stencil.angle_correction -= 1 if scene.tracks_mode else None
         elif input_key == ord("+"):
-            scene.stencil.angle_correction += 1
+            scene.stencil.angle_correction += 1 if scene.tracks_mode else None
         elif input_key == ord("f"):
-            scene.add_double_point()
+            if scene.tracks_mode:
+                scene.add_double_point()
+            elif scene.switches_mode:
+                scene.add_switch_mark()
         elif input_key == ord("r"):
-            scene.remove_double_point()
+            if scene.tracks_mode:
+                scene.remove_double_point()
+            elif scene.switches_mode:
+                scene.del_switch_mark()
         elif input_key == ord("n") or event == "Next":
             dataset.write_annotations(scene.to_dict())
             del scene
@@ -137,20 +169,26 @@ def main():
                 scene.add_track("ego")
                 scene.activate_track(0)
         elif input_key == ord("x"):
-            track_id: int = scene.add_track("ego")
-            scene.activate_track(track_id)
+            if scene.tracks_mode:
+                track_id: int = scene.add_track("ego")
+                scene.activate_track(track_id)
         elif input_key == ord("y"):
-            track_id: int = scene.add_track("left")
-            scene.activate_track(track_id)
+            if scene.tracks_mode:
+                track_id: int = scene.add_track("left")
+                scene.activate_track(track_id)
         elif input_key == ord("c"):
-            track_id: int = scene.add_track("right")
-            scene.activate_track(track_id)
+            if scene.tracks_mode:
+                track_id: int = scene.add_track("right")
+                scene.activate_track(track_id)
         elif input_key == ord("l"):
-            scene.fill_tracks = not scene.fill_tracks
+            if scene.tracks_mode:
+                scene.fill_tracks = not scene.fill_tracks
         # Keys 0-9 represent track-ids
         elif input_key in [ord(str(zero_to_nine)) for zero_to_nine in range(10)]:
-            scene.activate_track(int(chr(input_key)))
+            if scene.tracks_mode:
+                scene.activate_track(int(chr(input_key)))
         else:
+            # Draw OpenCV scene
             scene.draw(mouse)
             scene.show()
 

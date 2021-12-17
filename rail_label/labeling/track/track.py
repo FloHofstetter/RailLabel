@@ -12,10 +12,12 @@ class Track:
     Represents all information of a track.
     """
 
-    def __init__(self, relative_position: str):
+    def __init__(self, track_id, relative_position: str) -> None:
         """
+        :param track_id: Id of track
         :param relative_position: Position relative to ego track
         """
+        self._id = track_id
         self._relative_position: str = relative_position
         self._left_rail: Rail = Rail(67)
         self._right_rail = Rail(67)
@@ -23,11 +25,11 @@ class Track:
         self._track_bed_spline_points: list[RailPoint] = []
 
     @property
-    def track_id(self) -> int:
-        return self._track_id
+    def id(self) -> int:
+        return self._id
 
     def __str__(self) -> None:
-        msg = f"Track: {self.relative_position}-track"
+        msg = f"ID: {self.id}, {self.relative_position}"
         return msg
 
     @property
@@ -120,6 +122,9 @@ class Track:
         self.right_rail.del_mark(mark)
 
     def to_dict(self) -> dict:
+        """
+        Dict representation of a track.
+        """
         track: dict = {
             "relative position": self.relative_position,
             "left rail": self._left_rail.to_dict(),

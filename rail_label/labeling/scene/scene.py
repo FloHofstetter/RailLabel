@@ -2,13 +2,15 @@ import pathlib
 
 import cv2
 import numpy as np
-import tabulate
 from typing import Union
-import itertools
 
 from rail_label.labeling.scene.stencil import Stencil
+from rail_label.labeling.scene.crosshair import CrossHair
 from rail_label.labeling.track.track import RailPoint
+from rail_label.labeling.scene.point import ImagePoint
 from rail_label.labeling.track.track import Track
+from rail_label.labeling.switch.switch import Switch
+from rail_label.labeling.switch.switch import Switch
 from rail_label.labeling.track.rail import Rail
 from rail_label.utils.camera import Camera
 from rail_label.utils.mouse import Mouse
@@ -19,21 +21,66 @@ class Scene:
     Represent everything on one image.
     """
     def __init__(self, window_name: str, image: np.ndarray, camera_parameters: pathlib.Path) -> None:
+        self._window_name: str = window_name
         self._camera = Camera(camera_parameters)
+
+        # Labeling mode
+        self._tracks_mode: bool = True
+        self._switches_mode: bool = False
+
+        # Aiming devices
         self.stencil = Stencil()
+        self.crosshair = CrossHair(image.shape[0], image.shape[1])
+        self._aiming_device_image_cache: Union[np.ndarray, None] = None
+
+        # Switches
+        self._switches: dict[int, Switch] = {}
+        self._active_switch: Union[Switch, None] = None
+        self._redraw_switches: bool = True
+        self._switch_image_cache: Union[np.ndarray, None] = None
+        self._switches_alpha: float = 0.5
+        self._show_switches_boxes: bool = True
+        self._fill_switches: bool = True
+
+        # Tracks
         self._tracks: dict[int, Track] = {}
         self._active_track: Union[Track, None] = None
         self._redraw_tracks = True
-        self._track_image_cache = None
-        self._image: np.ndarray = image
-        self._image_show: np.ndarray = image
-        self._window_name: str = window_name
-        self._fill_tracks: bool = True
         self._tracks_alpha: float = 0.5
+        self._track_image_cache = None
+        self._show_tracks_splines = False
         self._show_tracks_marks = True
         self._show_tracks_fill = True
         self._show_tracks_grid = False
-        self._show_tracks_splines = False
+        self._fill_tracks: bool = True
+
+        # Image
+        self._image: np.ndarray = image
+        self._image_show: np.ndarray = image
+
+    @property
+    def active_switch(self) -> Union[Switch, None]:
+        return self._active_switch
+
+    @property
+    def switches(self) -> dict[int, Switch]:
+        return self._switches
+
+    @property
+    def tracks_mode(self) -> bool:
+        return self._tracks_mode
+
+    @tracks_mode.setter
+    def tracks_mode(self, tracks_mode: bool):
+        self._tracks_mode = tracks_mode
+
+    @property
+    def switches_mode(self) -> bool:
+        return self._switches_mode
+
+    @switches_mode.setter
+    def switches_mode(self, switches_mode: bool):
+        self._switches_mode = switches_mode
 
     @property
     def show_tracks_marks(self) -> float:
@@ -103,9 +150,19 @@ class Scene:
         :return: ID of new track
         """
         new_track_id: int = max(self._tracks.keys()) + 1 if self._tracks else 0
-        new_track: Track = Track(relative_position)
+        new_track: Track = Track(new_track_id, relative_position)
         self._tracks[new_track_id] = new_track
         return new_track_id
+
+    def del_track(self, track_id):
+        """
+        Delete track from scene.
+        :param track_id: ID of track to delete
+        """
+        self._redraw_tracks = True
+        if self._active_track:
+            self._active_track = None
+            self.tracks.pop(track_id)
 
     def activate_track(self, track_id: int) -> None:
         """
@@ -142,19 +199,34 @@ class Scene:
         self._redraw_tracks = True
 
     def draw(self, mouse: Mouse) -> None:
-        self.stencil.calculate_rail_points(self._camera, mouse)
+        # Refresh image
+        self._image_show = self._image.copy()
 
         # Draw tracks
-        if self._redraw_tracks:
-            self._redraw_tracks = False
-            self._track_image_cache = self._image.copy()
-            self._draw_tracks(self._track_image_cache, splines=True, grid_points=True)
+        if self.tracks_mode:
+            if self._redraw_tracks:
+                self._redraw_tracks = False
+                self._track_image_cache = self._image.copy()
+                self._draw_tracks(self._track_image_cache, grid_points=True)
+            self._image_show = self._track_image_cache.copy()
 
-        stencil_image = self._track_image_cache.copy()
-        self.stencil.draw(stencil_image)
-        self._image_show = stencil_image
+        # Draw switches
+        if self.switches_mode:
+            if self._redraw_switches:
+                self._redraw_switches = False
+                self._switch_image_cache = self._image.copy()
+                self._draw_switches(self._switch_image_cache)
+            self._image_show = self._switch_image_cache.copy()
 
-    def _draw_tracks(self, image: np.ndarray, splines: bool = False, marks: bool = True, grid_points: bool = False, grid_polygon: bool = True):
+        # Aiming device
+        if self.tracks_mode:
+            self.stencil.calculate_rail_points(self._camera, mouse)
+            self.stencil.draw(self._image_show)
+        elif self.switches_mode:
+            self.crosshair.calculate(mouse)
+            self.crosshair.draw(self._image_show)
+
+    def _draw_tracks(self, image: np.ndarray, grid_points: bool = False):
         """
         Draw track related items.
         :param image: Image to draw on
@@ -177,27 +249,27 @@ class Scene:
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.marks:
-                    cv2.circle(marks_image, mark.point, 20, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(marks_image, mark.point, 5, color=(255, 0, 0), thickness=-1)
                 for mark in track.right_rail.marks:
-                    cv2.circle(marks_image, mark.point, 20, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(marks_image, mark.point, 5, color=(0, 255, 0), thickness=-1)
                 for mark in track.center_points:
-                    cv2.circle(marks_image, mark.point, 20, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(marks_image, mark.point, 5, color=(0, 0, 255), thickness=-1)
         if self._show_tracks_splines:
             splines_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.splines(15):
-                    cv2.circle(splines_image, mark.point, 5, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(splines_image, mark.point, 2, color=(255, 0, 0), thickness=-1)
                 for mark in track.right_rail.splines(15):
-                    cv2.circle(splines_image, mark.point, 5, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(splines_image, mark.point, 2, color=(0, 255, 0), thickness=-1)
         if grid_points:
             grid_points_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.contour_points(self._camera, 15):
-                    cv2.circle(grid_points_image, mark.point, 5, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(grid_points_image, mark.point, 2, color=(255, 0, 0), thickness=-1)
                 for mark in track.right_rail.contour_points(self._camera, 15):
-                    cv2.circle(grid_points_image, mark.point, 5, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(grid_points_image, mark.point, 2, color=(0, 255, 0), thickness=-1)
         if self.show_tracks_grid or self.show_tracks_fill:
             grid_polygon_image: np.ndarray = image.copy()
             for track in self._tracks.values():
@@ -252,6 +324,102 @@ class Scene:
         marks_alpha = self.tracks_alpha
         cv2.addWeighted(marks_image, marks_alpha, image, 1 - marks_alpha, 0, image) if self._show_tracks_marks else None
 
+    def add_switch_mark(self):
+        """
+        Add mark to active switch.
+        """
+        if self.active_switch:
+            self._redraw_switches = True
+            mark: ImagePoint
+            mark = ImagePoint(self.crosshair.center[0], self.crosshair.center[1])
+            if len(self.active_switch.marks) < 2:
+                self.active_switch.add_mark(mark)
+
+    def del_switch_mark(self):
+        """
+        Delete the nearest mark from active switch.
+        """
+        self._redraw_switches = True
+        if self.active_switch:
+            mark: ImagePoint
+            mark = ImagePoint(self.crosshair.center[0], self.crosshair.center[1])
+            self.active_switch.del_point(mark)
+
+    def add_switch(
+            self,
+            kind: bool,
+            direction: bool,
+            state: bool,
+    ) -> int:
+        """
+        Create a new switch.
+        :param kind:
+        :param direction:
+        :param state:
+        :return: ID of new switch
+        """
+        new_switch_id: int = max(self._switches.keys()) + 1 if self._switches else 0
+        new_switch: Switch = Switch(new_switch_id, kind, direction, state)
+        self._switches[new_switch_id] = new_switch
+        return new_switch_id
+
+    def del_switch(self, switch_id):
+        """
+        Delete switch from scene.
+        :param switch_id: ID of switch to delete
+        """
+        self._redraw_switches = True
+        if self.active_switch:
+            self._active_switch = None
+            self.switches.pop(switch_id)
+
+    def activate_switch(self, switch_id: int) -> None:
+        """
+        Set one switch active an all other passive.
+        :param switch_id: Switch to set active.
+        """
+        if switch_id in self.switches.keys():
+            self._active_switch = self.switches[switch_id]
+        else:
+            msg = f"Could not activate Switch {switch_id}, it does not"
+            msg += f" exist. Choose between {list(self._tracks.keys())}."
+
+    def _draw_switches(self, image: np.ndarray) -> None:
+        """
+        Draw switches on scene.
+        :param image: Image to draw on
+        """
+        switch: Switch
+        for switch in self.switches.values():
+            if len(switch.marks) == 1:
+                self._redraw_switches = True
+                cv2.rectangle(
+                    image,
+                    switch.marks[0].point,
+                    self.crosshair.center,
+                    (0, 255, 0),
+                    2,
+                )
+            elif len(switch.marks) == 2:
+                cv2.rectangle(
+                    image,
+                    switch.marks[0].point,
+                    switch.marks[1].point,
+                    (0, 255, 0),
+                    2,
+                )
+            if len(switch.marks) >= 1:
+                cv2.putText(
+                    img=image,
+                    text=f"{switch.id:02d}",
+                    org=switch.marks[0].point,
+                    fontFace=0,
+                    fontScale=1.0,
+                    color=(0, 255, 0),
+                    thickness=2,
+                    lineType=cv2.LINE_AA,
+                )
+
     def show(self) -> None:
         cv2.imshow(self._window_name, self._image_show)
 
@@ -262,8 +430,8 @@ class Scene:
         """
         scene = {
             "tracks": {track_id: track.to_dict() for (track_id, track) in self._tracks.items()},
-            "switches": {},
-            "tags": {}
+            "switches": {switch_id: switch.to_dict() for (switch_id, switch) in self.switches.items()},
+            "tags": {},
         }
         return scene
 
@@ -273,19 +441,32 @@ class Scene:
         :param annotations: Annotations as dict
         """
         # Track objects
-        for track_id, track in annotations["tracks"].items():
-            track_obj = Track(track["relative position"])
-            track_obj.left_rail = Rail(67)
-            track_obj.right_rail = Rail(67)
-            for point in track["left rail"]["points"]:
-                rail_points = RailPoint(point[0], point[1])
-                track_obj.left_rail.marks.append(rail_points)
-            for point in track["right rail"]["points"]:
-                rail_points = RailPoint(point[0], point[1])
-                track_obj.right_rail.marks.append(rail_points)
-            self._tracks[int(track_id)] = track_obj
-        if 0 in self._tracks.keys():
-            self.activate_track(0)
+        if "tracks" in annotations:
+            for track_id, track in annotations["tracks"].items():
+                track_obj = Track(int(track_id), track["relative position"])
+                track_obj.left_rail = Rail(67)
+                track_obj.right_rail = Rail(67)
+                for point in track["left rail"]["points"]:
+                    rail_points = RailPoint(point[0], point[1])
+                    track_obj.left_rail.marks.append(rail_points)
+                for point in track["right rail"]["points"]:
+                    rail_points = RailPoint(point[0], point[1])
+                    track_obj.right_rail.marks.append(rail_points)
+                self._tracks[int(track_id)] = track_obj
+            if 0 in self._tracks.keys():
+                self.activate_track(0)
+        # Switch objects
+        if "switches" in annotations:
+            for switch_id, switch in annotations["switches"].items():
+                kind = switch["kind"]
+                direction = switch["direction"]
+                state = switch["state"]
+                tracks = switch["tracks"]
+                switch_obj = Switch(int(switch_id), kind, direction, state, tracks)
+                for mark_list in switch["marks"]:
+                    mark = ImagePoint(mark_list[0], mark_list[1])
+                    switch_obj.add_mark(mark)
+                self.switches[int(switch_id)] = switch_obj
 
 
 def main():
