@@ -49,7 +49,8 @@ class LabelGui:
         """
         # Get window content
         self.event, self.values = self.window.read(0)
-        # Disable 'New track' button
+
+        # Disable 'New track' button if attributes not set.
         if (
             self.values["track.relpos.left"]
             or self.values["track.relpos.ego"]
@@ -58,11 +59,27 @@ class LabelGui:
             self.window["track.new"].update(disabled=False)
         else:
             self.window["track.new"].update(disabled=True)
+
         # Disable 'Delete track' button
         if len(self.values["track.active.track"]):
             self.window["track.del"].update(disabled=False)
         else:
             self.window["track.del"].update(disabled=True)
+
+        # Disable 'New Switch' button it attributes not set.
+        if (self.values["switch.kind.fork"] or self.values["switch.kind.merge"]) and (
+            self.values["switch.direction.right"]
+            or self.values["switch.direction.left"]
+        ):
+            self.window["switch.new"].update(disabled=False)
+        else:
+            self.window["switch.new"].update(disabled=True)
+
+        # Disable 'Delete switch' button
+        if len(self.values["switch.active.switch"]):
+            self.window["switch.del"].update(disabled=False)
+        else:
+            self.window["switch.del"].update(disabled=True)
 
     def refresh_cv_gui(self) -> None:
         """
@@ -190,6 +207,15 @@ class LabelGui:
         switch_list = [switch for switch in self.scene.switches.values()]
         self.window["switch.active.switch"].update(switch_list)
 
+    def _clear_switch_radio_buttons(self):
+        """
+        Reset values of the switch radio buttons.
+        """
+        self.window["switch.kind.fork"].update(False)
+        self.window["switch.kind.merge"].update(False)
+        self.window["switch.direction.right"].update(False)
+        self.window["switch.direction.left"].update(False)
+
     def new_switch(self) -> None:
         """
         Process event 'New Switch' button is pressed.
@@ -198,6 +224,7 @@ class LabelGui:
         direction = True if self.values["switch.direction.right"] else False
         self.scene.add_switch(kind, direction)
         self._refresh_switch_list_box()
+        self._clear_switch_radio_buttons()
 
     def del_switch(self) -> None:
         """
