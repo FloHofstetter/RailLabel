@@ -9,6 +9,7 @@ class Stencil:
     Represents the stencil to aim for both rails.
 
     """
+
     def __init__(self):
         """
 
@@ -86,21 +87,49 @@ class Stencil:
             self._left_rail_point = list(mouse.position)
             # Shift stencil to the left for better view
             self._left_rail_point[0] += 50
-            self._right_rail_point = (self._left_rail_point[0] + self._width, self._left_rail_point[1])
-            self._right_rail_point = np.rint(self.rotate(self.angle_correction, self._left_rail_point, self._right_rail_point)).astype(int).tolist()
+            self._right_rail_point = (
+                self._left_rail_point[0] + self._width,
+                self._left_rail_point[1],
+            )
+            self._right_rail_point = (
+                np.rint(
+                    self.rotate(
+                        self.angle_correction,
+                        self._left_rail_point,
+                        self._right_rail_point,
+                    )
+                )
+                .astype(int)
+                .tolist()
+            )
         # Free circle is on the left
         elif self._mode == "aim_right_rail":
             self._right_rail_point = list(mouse.position)
             # Shift stencil to the right for better view
             self._right_rail_point[0] -= 50
-            self._left_rail_point = (self._right_rail_point[0] - self._width, self._right_rail_point[1])
-            self._left_rail_point = np.rint(self.rotate(self.angle_correction, self._right_rail_point, self._left_rail_point)).astype(int).tolist()
+            self._left_rail_point = (
+                self._right_rail_point[0] - self._width,
+                self._right_rail_point[1],
+            )
+            self._left_rail_point = (
+                np.rint(
+                    self.rotate(
+                        self.angle_correction,
+                        self._right_rail_point,
+                        self._left_rail_point,
+                    )
+                )
+                .astype(int)
+                .tolist()
+            )
         else:
             msg = "Expected mode to be 'aim_left_rail' "
             msg += f"or 'aim_right_rail', got {self._mode}"
             raise ValueError(msg)
         # Center is in the middle ether way
-        center_rail_point = np.mean((self._left_rail_point, self._right_rail_point), axis=0)
+        center_rail_point = np.mean(
+            (self._left_rail_point, self._right_rail_point), axis=0
+        )
         # Round to full pixel
         self._center_rail_point = np.rint(center_rail_point).astype(int)
 
@@ -173,6 +202,7 @@ class Stencil:
         z[0] = r[0] + rotate_around[0]
         z[1] = r[1] + rotate_around[1]
         return z
+
 
 def main():
     a = [2, 1.5]

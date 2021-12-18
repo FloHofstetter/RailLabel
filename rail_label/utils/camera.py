@@ -23,21 +23,27 @@ class Camera:
     def _get_rotation_matrix(self):
         # Rotation on y-axis
         r_yaw = np.array(
-            [[np.cos(self.yaw), 0, -np.sin(self.yaw)],
-             [0, 1, 0],
-             [np.sin(self.yaw), 0, np.cos(self.yaw)]]
+            [
+                [np.cos(self.yaw), 0, -np.sin(self.yaw)],
+                [0, 1, 0],
+                [np.sin(self.yaw), 0, np.cos(self.yaw)],
+            ]
         )
         # Rotation on x-axis
         r_pitch = np.array(
-            [[1, 0, 0],
-             [0, np.cos(self.pitch), np.sin(self.pitch)],
-             [0, -np.sin(self.pitch), np.cos(self.pitch)]]
+            [
+                [1, 0, 0],
+                [0, np.cos(self.pitch), np.sin(self.pitch)],
+                [0, -np.sin(self.pitch), np.cos(self.pitch)],
+            ]
         )
         # Rotation on z-axis
         r_roll = np.array(
-            [[np.cos(self.roll), np.sin(self.roll), 0],
-             [-np.sin(self.roll), np.cos(self.roll), 0],
-             [0, 0, 1]]
+            [
+                [np.cos(self.roll), np.sin(self.roll), 0],
+                [-np.sin(self.roll), np.cos(self.roll), 0],
+                [0, 0, 1],
+            ]
         )
         # Combined rotation matrix
         r = np.dot(np.dot(r_roll, r_pitch), r_yaw)
@@ -114,11 +120,9 @@ class Camera:
         return world_point
 
     def _read_yaml(self, camera_file_pth: Union[str, pathlib.Path]):
-        """
-
-        """
+        """ """
         calibration_file = cv2.FileStorage(str(camera_file_pth), cv2.FileStorage_READ)
-        numbers = calibration_file.getNode('distortion_coefficients')
+        numbers = calibration_file.getNode("distortion_coefficients")
         dest_coef = []
         for i in range(0, numbers.size()):
             dest_coef.append(numbers.at(i).real())

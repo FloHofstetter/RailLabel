@@ -9,6 +9,7 @@ class DataSet:
     Loads images and annotations.
 
     """
+
     def __init__(self, dataset_path: Union[pathlib.Path, str]):
         """
         Initialize the data loader.
@@ -60,7 +61,7 @@ class DataSet:
             "image": image,
             "name": image_path.stem,
             "annotations": annotation,
-            "camera_yml": self._camera_yml
+            "camera_yml": self._camera_yml,
         }
         return data
 

@@ -6,6 +6,7 @@ class ImagePoint:
     """
     Represents a point in image coordinates aka. pixel coordinates.
     """
+
     def __init__(self, x: int, y: int):
         """
 

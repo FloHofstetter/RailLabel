@@ -11,6 +11,7 @@ class RailPoint(ImagePoint):
     """
     Represent point on rail.
     """
+
     def __init__(self, x: int, y: int):
         super().__init__(x, y)
 
@@ -40,6 +41,7 @@ class Rail:
     """
     Represent one rail of a track.
     """
+
     def __init__(self, width) -> None:
         """
         :param width: Rail width in mm
@@ -72,7 +74,7 @@ class Rail:
             mark_points_arr: np.ndarray
             mark_points_arr = np.vstack([mark.point for mark in self._marks])
             sp: splines.CatmullRom
-            sp = splines.CatmullRom(mark_points_arr, endconditions='natural')
+            sp = splines.CatmullRom(mark_points_arr, endconditions="natural")
             total_duration: int = sp.grid[-1] - sp.grid[0]
             t: numpy.ndarray
             t = np.linspace(0, total_duration, len(mark_points_arr) * steps)
@@ -81,12 +83,16 @@ class Rail:
             # Round splines because it represents discrete pixels
             splines_arr = np.rint(splines_arr).astype(int)
             spline_arr: np.array
-            spline_points = [RailPoint(spline_arr[0], spline_arr[1]) for spline_arr in splines_arr]
+            spline_points = [
+                RailPoint(spline_arr[0], spline_arr[1]) for spline_arr in splines_arr
+            ]
             return spline_points
         else:
             return []
 
-    def contour_points(self, camera: Camera, steps: int, contour_side="both") -> list[RailPoint]:
+    def contour_points(
+        self, camera: Camera, steps: int, contour_side="both"
+    ) -> list[RailPoint]:
         """
         Get points describing contour around the rail.
         The dots describe the contour of the rail clockwise starting
@@ -103,15 +109,23 @@ class Rail:
         for spline_point in self.splines(steps):
             for side in [-1, 1]:
                 # Grid points to the left
-                spline_point_world_arr: np.ndarray = camera.pixel_to_world(spline_point.point)
+                spline_point_world_arr: np.ndarray = camera.pixel_to_world(
+                    spline_point.point
+                )
                 contour_point_world_arr: np.ndarray = spline_point_world_arr
                 # Left side add half of rail width, right side subtracts half of rail width.
-                contour_point_world_arr[0] = spline_point_world_arr[0] + self.width * side / 2
-                contour_point_image_arr: np.ndarray = camera.world_to_pixel(contour_point_world_arr)
+                contour_point_world_arr[0] = (
+                    spline_point_world_arr[0] + self.width * side / 2
+                )
+                contour_point_image_arr: np.ndarray = camera.world_to_pixel(
+                    contour_point_world_arr
+                )
                 # Round coordinate because it represents discrete pixels
                 contour_point_image_arr = np.rint(contour_point_image_arr).astype(int)
                 contour_point: RailPoint
-                contour_point = RailPoint(contour_point_image_arr[0], contour_point_image_arr[1])
+                contour_point = RailPoint(
+                    contour_point_image_arr[0], contour_point_image_arr[1]
+                )
                 if side == -1:
                     contour_points_left.append(contour_point)
                 else:
@@ -156,9 +170,7 @@ class Rail:
             self._marks.pop(lowest_dist_index)
 
     def to_dict(self) -> dict:
-        rail: dict = {
-            "points": [mark.point.tolist() for mark in self._marks]
-        }
+        rail: dict = {"points": [mark.point.tolist() for mark in self._marks]}
         return rail
 
 

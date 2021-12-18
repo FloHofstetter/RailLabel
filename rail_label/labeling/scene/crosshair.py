@@ -7,11 +7,12 @@ class CrossHair:
     """
     Implements bounding box crosshair.
     """
+
     def __init__(
-            self,
-            image_height: int,
-            image_width: int,
-            buffer: float = 0.025,
+        self,
+        image_height: int,
+        image_width: int,
+        buffer: float = 0.025,
     ) -> None:
         """
         :param image_height: Height of the target image

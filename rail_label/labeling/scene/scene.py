@@ -20,7 +20,10 @@ class Scene:
     """
     Represent everything on one image.
     """
-    def __init__(self, window_name: str, image: np.ndarray, camera_parameters: pathlib.Path) -> None:
+
+    def __init__(
+        self, window_name: str, image: np.ndarray, camera_parameters: pathlib.Path
+    ) -> None:
         self._window_name: str = window_name
         self._camera = Camera(camera_parameters)
 
@@ -57,6 +60,10 @@ class Scene:
         # Image
         self._image: np.ndarray = image
         self._image_show: np.ndarray = image
+
+    @property
+    def active_track(self) -> Union[Track, None]:
+        return self._active_track
 
     @property
     def active_switch(self) -> Union[Switch, None]:
@@ -181,8 +188,12 @@ class Scene:
         Ad marking point on both rails.
         """
         # TODO: Stencil should provide RailPoint point
-        left_mark: RailPoint = RailPoint(self.stencil.left_rail_point[0], self.stencil.left_rail_point[1])
-        right_mark: RailPoint = RailPoint(self.stencil.right_rail_point[0], self.stencil.right_rail_point[1])
+        left_mark: RailPoint = RailPoint(
+            self.stencil.left_rail_point[0], self.stencil.left_rail_point[1]
+        )
+        right_mark: RailPoint = RailPoint(
+            self.stencil.right_rail_point[0], self.stencil.right_rail_point[1]
+        )
         self._active_track.add_left_mark(left_mark)
         self._active_track.add_right_mark(right_mark)
         self._redraw_tracks = True
@@ -192,8 +203,12 @@ class Scene:
         Delete marking point near to given marking point on the rails.
         """
         # TODO: Stencil should provide RailPoint point
-        left_mark: RailPoint = RailPoint(self.stencil.left_rail_point[0], self.stencil.left_rail_point[1])
-        right_mark: RailPoint = RailPoint(self.stencil.right_rail_point[0], self.stencil.right_rail_point[1])
+        left_mark: RailPoint = RailPoint(
+            self.stencil.left_rail_point[0], self.stencil.left_rail_point[1]
+        )
+        right_mark: RailPoint = RailPoint(
+            self.stencil.right_rail_point[0], self.stencil.right_rail_point[1]
+        )
         self._active_track.del_left_mark(left_mark)
         self._active_track.del_right_mark(right_mark)
         self._redraw_tracks = True
@@ -249,27 +264,49 @@ class Scene:
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.marks:
-                    cv2.circle(marks_image, mark.point, 5, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(
+                        marks_image, mark.point, 5, color=(255, 0, 0), thickness=-1
+                    )
                 for mark in track.right_rail.marks:
-                    cv2.circle(marks_image, mark.point, 5, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(
+                        marks_image, mark.point, 5, color=(0, 255, 0), thickness=-1
+                    )
                 for mark in track.center_points:
-                    cv2.circle(marks_image, mark.point, 5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(
+                        marks_image, mark.point, 5, color=(0, 0, 255), thickness=-1
+                    )
         if self._show_tracks_splines:
             splines_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.splines(15):
-                    cv2.circle(splines_image, mark.point, 2, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(
+                        splines_image, mark.point, 2, color=(255, 0, 0), thickness=-1
+                    )
                 for mark in track.right_rail.splines(15):
-                    cv2.circle(splines_image, mark.point, 2, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(
+                        splines_image, mark.point, 2, color=(0, 255, 0), thickness=-1
+                    )
         if grid_points:
             grid_points_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
                 for mark in track.left_rail.contour_points(self._camera, 15):
-                    cv2.circle(grid_points_image, mark.point, 2, color=(255, 0, 0), thickness=-1)
+                    cv2.circle(
+                        grid_points_image,
+                        mark.point,
+                        2,
+                        color=(255, 0, 0),
+                        thickness=-1,
+                    )
                 for mark in track.right_rail.contour_points(self._camera, 15):
-                    cv2.circle(grid_points_image, mark.point, 2, color=(0, 255, 0), thickness=-1)
+                    cv2.circle(
+                        grid_points_image,
+                        mark.point,
+                        2,
+                        color=(0, 255, 0),
+                        thickness=-1,
+                    )
         if self.show_tracks_grid or self.show_tracks_fill:
             grid_polygon_image: np.ndarray = image.copy()
             for track in self._tracks.values():
@@ -278,51 +315,118 @@ class Scene:
                 points_arr: np.ndarray
                 # Rails
                 for rail in [track.left_rail, track.right_rail]:
-                    points = [point.point for point in rail.contour_points(self._camera, 15)]
+                    points = [
+                        point.point for point in rail.contour_points(self._camera, 15)
+                    ]
                     # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                     points_arr = np.array(points).astype(np.int32)
                     if self.show_tracks_fill and len(points) > 1:
                         if track.relative_position == "ego":
-                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_rails"])
+                            cv2.fillConvexPoly(
+                                grid_polygon_image,
+                                points_arr,
+                                track_to_color["ego_rails"],
+                            )
                         elif track.relative_position == "left":
-                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_rails"])
+                            cv2.fillConvexPoly(
+                                grid_polygon_image,
+                                points_arr,
+                                track_to_color["left_rails"],
+                            )
                         elif track.relative_position == "right":
-                            cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_rails"])
+                            cv2.fillConvexPoly(
+                                grid_polygon_image,
+                                points_arr,
+                                track_to_color["right_rails"],
+                            )
                     if self.show_tracks_grid and len(points) > 1:
                         if track.relative_position == "ego":
-                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_rails"], thickness=3)
+                            cv2.polylines(
+                                grid_polygon_image,
+                                [points_arr],
+                                True,
+                                track_to_color["ego_rails"],
+                                thickness=3,
+                            )
                         elif track.relative_position == "left":
-                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["left_rails"], thickness=3)
+                            cv2.polylines(
+                                grid_polygon_image,
+                                [points_arr],
+                                True,
+                                track_to_color["left_rails"],
+                                thickness=3,
+                            )
                         elif track.relative_position == "right":
-                            cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["right_rails"], thickness=3)
+                            cv2.polylines(
+                                grid_polygon_image,
+                                [points_arr],
+                                True,
+                                track_to_color["right_rails"],
+                                thickness=3,
+                            )
                 # Trackbed
-                points = [point.point for point in track.track_bed_spline_points(self._camera, 15)]
+                points = [
+                    point.point
+                    for point in track.track_bed_spline_points(self._camera, 15)
+                ]
                 # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                 points_arr = np.array(points).astype(np.int32)
                 if self.show_tracks_fill and len(points) > 1:
                     if track.relative_position == "ego":
-                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["ego_bed"])
+                        cv2.fillConvexPoly(
+                            grid_polygon_image, points_arr, track_to_color["ego_bed"]
+                        )
                     elif track.relative_position == "left":
-                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["left_bed"])
+                        cv2.fillConvexPoly(
+                            grid_polygon_image, points_arr, track_to_color["left_bed"]
+                        )
                     elif track.relative_position == "right":
-                        cv2.fillConvexPoly(grid_polygon_image, points_arr, track_to_color["right_bed"])
+                        cv2.fillConvexPoly(
+                            grid_polygon_image, points_arr, track_to_color["right_bed"]
+                        )
                 if self.show_tracks_grid and len(points) > 1:
                     if track.relative_position == "ego":
-                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["ego_bed"], thickness=3)
+                        cv2.polylines(
+                            grid_polygon_image,
+                            [points_arr],
+                            True,
+                            track_to_color["ego_bed"],
+                            thickness=3,
+                        )
                     elif track.relative_position == "left":
-                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["left_bed"], thickness=3)
+                        cv2.polylines(
+                            grid_polygon_image,
+                            [points_arr],
+                            True,
+                            track_to_color["left_bed"],
+                            thickness=3,
+                        )
                     elif track.relative_position == "right":
-                        cv2.polylines(grid_polygon_image, [points_arr], True, track_to_color["right_bed"], thickness=3)
+                        cv2.polylines(
+                            grid_polygon_image,
+                            [points_arr],
+                            True,
+                            track_to_color["right_bed"],
+                            thickness=3,
+                        )
                     # Polylines needs list of points https://stackoverflow.com/a/56426368/4835208
-                    cv2.polylines(grid_polygon_image, [points_arr], True, (0, 255, 0), thickness=3)
+                    cv2.polylines(
+                        grid_polygon_image, [points_arr], True, (0, 255, 0), thickness=3
+                    )
         # Blend track images
         splines_alpha = self.tracks_alpha
-        cv2.addWeighted(splines_image, splines_alpha, image, 1 - splines_alpha, 0, image) if self._show_tracks_splines else None
+        cv2.addWeighted(
+            splines_image, splines_alpha, image, 1 - splines_alpha, 0, image
+        ) if self._show_tracks_splines else None
         # cv2.addWeighted(grid_points_image, marks_alpha, image, 1 - marks_alpha, 0, image)
         polygons_alpha = self.tracks_alpha
-        cv2.addWeighted(grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image) if self.show_tracks_fill or self.show_tracks_grid else None
+        cv2.addWeighted(
+            grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image
+        ) if self.show_tracks_fill or self.show_tracks_grid else None
         marks_alpha = self.tracks_alpha
-        cv2.addWeighted(marks_image, marks_alpha, image, 1 - marks_alpha, 0, image) if self._show_tracks_marks else None
+        cv2.addWeighted(
+            marks_image, marks_alpha, image, 1 - marks_alpha, 0, image
+        ) if self._show_tracks_marks else None
 
     def add_switch_mark(self):
         """
@@ -346,20 +450,18 @@ class Scene:
             self.active_switch.del_point(mark)
 
     def add_switch(
-            self,
-            kind: bool,
-            direction: bool,
-            state: bool,
+        self,
+        kind: bool,
+        direction: bool,
     ) -> int:
         """
         Create a new switch.
         :param kind:
         :param direction:
-        :param state:
         :return: ID of new switch
         """
         new_switch_id: int = max(self._switches.keys()) + 1 if self._switches else 0
-        new_switch: Switch = Switch(new_switch_id, kind, direction, state)
+        new_switch: Switch = Switch(new_switch_id, kind, direction)
         self._switches[new_switch_id] = new_switch
         return new_switch_id
 
@@ -429,8 +531,13 @@ class Scene:
         :return: Annotations as dict
         """
         scene = {
-            "tracks": {track_id: track.to_dict() for (track_id, track) in self._tracks.items()},
-            "switches": {switch_id: switch.to_dict() for (switch_id, switch) in self.switches.items()},
+            "tracks": {
+                track_id: track.to_dict() for (track_id, track) in self._tracks.items()
+            },
+            "switches": {
+                switch_id: switch.to_dict()
+                for (switch_id, switch) in self.switches.items()
+            },
             "tags": {},
         }
         return scene
@@ -460,9 +567,8 @@ class Scene:
             for switch_id, switch in annotations["switches"].items():
                 kind = switch["kind"]
                 direction = switch["direction"]
-                state = switch["state"]
                 tracks = switch["tracks"]
-                switch_obj = Switch(int(switch_id), kind, direction, state, tracks)
+                switch_obj = Switch(int(switch_id), kind, direction, tracks)
                 for mark_list in switch["marks"]:
                     mark = ImagePoint(mark_list[0], mark_list[1])
                     switch_obj.add_mark(mark)

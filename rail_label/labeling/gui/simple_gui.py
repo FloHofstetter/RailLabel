@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 
 
-def settings_window():
+def settings_window_layout():
     # Track drawing attributes
     tracks_marks = sg.Checkbox(
         "marks",
@@ -64,7 +64,7 @@ def settings_window():
         enable_events=True,
         key="track.del",
         expand_x=True,
-        button_color="red"
+        button_color="red",
     )
     track_active_text = sg.Text("Active track:")
     track_active_list = sg.Listbox(
@@ -102,12 +102,12 @@ def settings_window():
         [track_new, track_delete],
         [track_active_text],
         [track_active_list],
-
     ]
     track_label_frame = sg.Frame(
         "Track label",
         layout=track_label_layout,
         expand_x=True,
+        expand_y=True,
     )
 
     # Switch drawing attributes
@@ -151,7 +151,7 @@ def settings_window():
         enable_events=True,
         key="switch.del",
         expand_x=True,
-        button_color="red"
+        button_color="red",
     )
     switch_active_text = sg.Text("Active switch:")
     switch_active_list = sg.Listbox(
@@ -176,7 +176,10 @@ def settings_window():
         enable_events=True,
         expand_x=True,
     )
-    switch_kind = sg.Column([[switch_kind_forg], [switch_kind_merge]])
+    switch_kind = sg.Column(
+        [[switch_kind_forg], [switch_kind_merge]],
+        expand_x=True,
+    )
     switch_direction_right = sg.Radio(
         "Right",
         key="switch.direction.right",
@@ -191,33 +194,18 @@ def settings_window():
         enable_events=True,
         expand_x=True,
     )
-    switch_direction = sg.Column([[switch_direction_right], [switch_direction_left]])
-    switch_state_on = sg.Radio(
-        "On",
-        key="switch.state.on",
-        group_id="switch.state",
-        enable_events=True,
-        expand_x=True,
+    switch_direction = sg.Column(
+        [[switch_direction_right], [switch_direction_left]], expand_x=True
     )
-    switch_state_off = sg.Radio(
-        "Off",
-        key="switch.state.off",
-        group_id="switch.state",
-        enable_events=True,
-        expand_x=True,
-    )
-    switch_state = sg.Column([[switch_state_on], [switch_state_off]])
     switch_label_layout = [
-        [switch_new, switch_delete],
-        [switch_active_text],
-        [switch_active_list],
         [
             switch_kind,
             sg.VerticalSeparator(),
             switch_direction,
-            sg.VerticalSeparator(),
-            switch_state,
         ],
+        [switch_new, switch_delete],
+        [switch_active_text],
+        [switch_active_list],
     ]
     switch_label_frame = sg.Frame(
         "Switch label",
@@ -227,20 +215,20 @@ def settings_window():
 
     # Window layout
     label_tabs = sg.TabGroup(
-        [[
-            sg.Tab(
-                "Track",
-                [[track_draw_frame, track_label_frame]],
-                key="track.tab"
-            ),
-            sg.Tab(
-                "Switch",
-                [[sg.Column([[switch_draw_frame, switch_label_frame]])]],
-                key="switch.tab",
-            ),
-        ]],
+        [
+            [
+                sg.Tab(
+                    "Track", [[track_draw_frame, track_label_frame]], key="track.tab"
+                ),
+                sg.Tab(
+                    "Switch",
+                    [[sg.Column([[switch_draw_frame, switch_label_frame]])]],
+                    key="switch.tab",
+                ),
+            ]
+        ],
         key="mode.tab",
-        enable_events=True
+        enable_events=True,
     )
     layout = [
         [label_tabs],
@@ -250,5 +238,4 @@ def settings_window():
             sg.Button("Exit", button_color="red"),
         ],
     ]
-    window = sg.Window("Label-tool settings", layout)
-    return window
+    return layout

@@ -66,7 +66,9 @@ class Track:
         len_right: int = len(self.right_rail.marks)
         # Midpoints exist only between respectively two points
         if len_left == len_right and len_right > 0:
-            for left_point, right_point in zip(self.left_rail.marks, self.right_rail.marks):
+            for left_point, right_point in zip(
+                self.left_rail.marks, self.right_rail.marks
+            ):
                 center_point: RailPoint = left_point.midpoint(right_point)
                 center_points.append(center_point)
                 self._center_points = center_points
@@ -83,9 +85,13 @@ class Track:
         :return: Trackbed polygon points
         """
         left_rail_splines: list[RailPoint]
-        left_rail_splines = self.left_rail.contour_points(camera, steps, contour_side="right")
+        left_rail_splines = self.left_rail.contour_points(
+            camera, steps, contour_side="right"
+        )
         right_rail_splines: list[RailPoint]
-        right_rail_splines = self.right_rail.contour_points(camera, steps, contour_side="left")
+        right_rail_splines = self.right_rail.contour_points(
+            camera, steps, contour_side="left"
+        )
         self._track_bed_spline_points = [*left_rail_splines, *right_rail_splines]
         return self._track_bed_spline_points
 
@@ -128,7 +134,7 @@ class Track:
         track: dict = {
             "relative position": self.relative_position,
             "left rail": self._left_rail.to_dict(),
-            "right rail": self._right_rail.to_dict()
+            "right rail": self._right_rail.to_dict(),
         }
         return track
 

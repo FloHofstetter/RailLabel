@@ -5,3 +5,5 @@ splines
 iteration-utilities
 PySimpleGUI
 setuptools
+black
+pre-commit

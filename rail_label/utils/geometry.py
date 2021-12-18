@@ -5,22 +5,18 @@ class Line:
     """
     Represent
     """
-    def __init__(self, p: np.ndarray, a: np.ndarray):
-        """
 
-        """
+    def __init__(self, p: np.ndarray, a: np.ndarray):
+        """ """
         self.p: np.ndarray = p
         self.a: np.ndarray = a
 
 
 class Plane:
-    """
+    """ """
 
-    """
     def __init__(self, c: np.ndarray, r: float):
-        """
-
-        """
+        """ """
         self.c: np.ndarray = c
         self.r: float = r
 

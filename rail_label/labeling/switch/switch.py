@@ -11,6 +11,7 @@ class BoundingBox:
     """
     Represents a bounding box marking an object.
     """
+
     def __init__(self, point1: ImagePoint, point2: ImagePoint):
         self._point1: ImagePoint = point1
         self._point2: ImagePoint = point2
@@ -20,14 +21,8 @@ class Switch:
     """
     Represent a witch.
     """
-    def __init__(
-            self,
-            switch_id: int,
-            fork: bool,
-            right: bool,
-            state: bool,
-            tracks=None
-    ) -> None:
+
+    def __init__(self, switch_id: int, fork: bool, right: bool, tracks=None) -> None:
         """
         :param fork: Fork(True) or merge(False)
         :param right: Right(True) or left(False)
@@ -36,7 +31,6 @@ class Switch:
         self._id = switch_id
         self._fork: bool = fork
         self._direction: bool = right
-        self._state: bool = state
         self._tracks: list[int] = [] if tracks is None else tracks
         self._marks: list[ImagePoint] = []
 
@@ -72,9 +66,8 @@ class Switch:
 
     def __str__(self):
         kind = "forg" if self.fork else "merge"
-        state = "on" if self.state else "off"
         direction = "right" if self.direction else "left"
-        msg = f"{self._id:02d}, {kind}, {direction}, {state}"
+        msg = f"{self._id:02d}, {kind}, {direction}"
         return msg
 
     def to_dict(self) -> dict:
@@ -87,7 +80,6 @@ class Switch:
             "marks": [mark.point.tolist() for mark in self.marks],
             "kind": self.fork,
             "direction": self.direction,
-            "state": self.state,
             "tracks": [],
         }
         return switch
@@ -111,10 +103,6 @@ class Switch:
     @property
     def direction(self) -> bool:
         return self._direction
-
-    @property
-    def state(self) -> bool:
-        return self._state
 
 
 def main():
