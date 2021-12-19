@@ -258,6 +258,7 @@ def settings_window_layout():
             sg.Text("xxx of xxx", key="scene.counter"),
             sg.Button("Next"),
             sg.Button("Exit", button_color="red"),
+            sg.Text("Scene name", key="scene.name"),
         ],
     ]
     return layout
