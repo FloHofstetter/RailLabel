@@ -213,7 +213,24 @@ def settings_window_layout():
         expand_x=True,
     )
 
-    # Window layout
+    # Tags
+    scene_tags_list = sg.Listbox(
+        values=["sun", "rain", "snow", "curve", "strength", "dawn", "dark"],
+        expand_x=True,
+        size=(0, 5),
+        enable_events=True,
+        key="track.active.track",
+        select_mode=sg.LISTBOX_SELECT_MODE_MULTIPLE,
+        expand_y=True,
+    )
+    scene_tags_frame = sg.Frame(
+        "Scene Tags",
+        layout=[[scene_tags_list]],
+        expand_x=True,
+        expand_y=True,
+    )
+
+    # Tabs
     label_tabs = sg.TabGroup(
         [
             [
@@ -225,13 +242,17 @@ def settings_window_layout():
                     [[sg.Column([[switch_draw_frame, switch_label_frame]])]],
                     key="switch.tab",
                 ),
-            ]
+            ],
         ],
         key="mode.tab",
         enable_events=True,
     )
+
+    tabs_and_tags_column = sg.Column([[label_tabs, scene_tags_frame]])
+
+    # Window layout
     layout = [
-        [label_tabs],
+        [tabs_and_tags_column],
         [
             sg.Button("Previous"),
             sg.Button("Next"),
