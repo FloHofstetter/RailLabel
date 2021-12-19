@@ -54,7 +54,6 @@ class Scene:
         self._show_tracks_marks = True
         self._show_tracks_fill = True
         self._show_tracks_grid = False
-        self._fill_tracks: bool = True
 
         # Image
         self._image: np.ndarray = image
@@ -140,14 +139,6 @@ class Scene:
     @property
     def tracks(self):
         return self._tracks
-
-    @property
-    def fill_tracks(self) -> bool:
-        return self._fill_tracks
-
-    @fill_tracks.setter
-    def fill_tracks(self, fill_tracks: bool) -> None:
-        self._fill_tracks = fill_tracks
 
     def add_track(self, relative_position) -> int:
         """

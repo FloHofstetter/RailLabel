@@ -179,11 +179,17 @@ class LabelGui:
             track_id = self.values["track.active.track"][0].id
             self.scene.activate_track(track_id)
 
+    def show_marks(self) -> None:
+        """
+        Process event 'marks track' checkbox checked.
+        """
+        self.scene.fill_tracks = self.values["track.marks"]
+
     def fill_tracks(self) -> None:
         """
         Process event 'fill track' checkbox checked.
         """
-        self.scene.fill_tracks = self.values["track.fill"]
+        self.scene.show_tracks_fill = self.values["track.fill"]
 
     def grid_tracks(self) -> None:
         """
@@ -308,18 +314,14 @@ class LabelGui:
                 self.select_track()
             elif self.event == "mode.tab":
                 self.select_label_mode()
-            elif self.event == "tracks_marks":
-                pass
-                # Show track marks
-            elif self.event == "tracks_fill":
-                pass
-                # Fill tracks
-            elif self.event == "tracks_grid":
-                pass
-                # show grid
-            elif self.event == "tracks_splines":
-                pass
-                # Show track splines
+            elif self.event == "track.marks":
+                self.show_marks()
+            elif self.event == "track.fill":
+                self.fill_tracks()
+            elif self.event == "track.grid":
+                self.grid_tracks()
+            elif self.event == "track.splines":
+                self.splines_tracks()
             elif self.event == "track.transparency":
                 self.transparency_tracks()
             elif input_key == ord("s"):
