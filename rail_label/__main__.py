@@ -1,16 +1,11 @@
-import itertools
-
-import cv2
 import pathlib
 import argparse
-
 from rail_label.label_gui import LabelGui
 
 
 def parse_args(parser: argparse.ArgumentParser):
     """
     Parse CLI arguments.
-
     :param parser: Argument parser Object.
     :return: CLI Arguments object.
     """

@@ -7,3 +7,4 @@ PySimpleGUI
 setuptools
 black
 pre-commit
+pyyaml

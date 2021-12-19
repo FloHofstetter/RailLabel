@@ -11,3 +11,4 @@ dependencies:
     - setuptools
     - black
     - pre-commit
+    - pyyaml

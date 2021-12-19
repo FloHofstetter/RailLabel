@@ -31,7 +31,7 @@ setup(
         "iteration-utilities",
         "PySimpleGUI",
     ],
-    keywords=["python", "video", "railway", "rail", "train", "labeling"],
+    keywords=["python", "video", "railway", "rail", "train", "labeling", "pyyaml"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
