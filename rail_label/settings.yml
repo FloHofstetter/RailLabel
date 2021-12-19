@@ -7,6 +7,14 @@ rail_width: 67  # mm
 dataset_path: .
 # Calculations
 marker_interpolation_steps: 15  # steps
+# Tags for scenes (only append)
+tags:
+  - snow
+  - rain/fog
+  - dazzling/blinding
+  - dark/dawn/night
+  - curve
+  - stright
 # GUI colors
 
 ## Pipeline script config

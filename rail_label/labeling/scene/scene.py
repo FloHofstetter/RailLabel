@@ -62,9 +62,22 @@ class Scene:
         self._show_tracks_fill = True
         self._show_tracks_grid = False
 
-        # Image
+        # Scene
         self._image: np.ndarray = image
         self._image_show: np.ndarray = image
+        self._tags: list[str] = []
+
+    @property
+    def tags(self) -> list[str]:
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: list[str]):
+        self._tags = tags
+
+    @property
+    def settings(self) -> dict:
+        return self._settings
 
     @property
     def active_track(self) -> Union[Track, None]:
@@ -548,7 +561,7 @@ class Scene:
                 switch_id: switch.to_dict()
                 for (switch_id, switch) in self.switches.items()
             },
-            "tags": {},
+            "tags": self.tags,
         }
         return scene
 
@@ -583,6 +596,8 @@ class Scene:
                     mark = ImagePoint(mark_list[0], mark_list[1])
                     switch_obj.add_mark(mark)
                 self.switches[int(switch_id)] = switch_obj
+        if "tags" in annotations:
+            self.tags = annotations["tags"]
 
 
 def main():

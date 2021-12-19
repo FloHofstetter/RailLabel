@@ -215,11 +215,11 @@ def settings_window_layout():
 
     # Tags
     scene_tags_list = sg.Listbox(
-        values=["sun", "rain", "snow", "curve", "strength", "dawn", "dark"],
+        values=[],
         expand_x=True,
         size=(0, 5),
         enable_events=True,
-        key="track.active.track",
+        key="scene.tags",
         select_mode=sg.LISTBOX_SELECT_MODE_MULTIPLE,
         expand_y=True,
     )

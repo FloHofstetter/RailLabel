@@ -108,6 +108,7 @@ class LabelGui:
         self._prepare_scene_switch("previous")
 
     def _prepare_scene_switch(self, direction: str):
+        self._write_scene_tags() if self.scene else None
         self.dataset.write_annotations(self.scene.to_dict()) if self.scene else None
         if direction == "next":
             if self.dataset_counter < len(self.dataset) - 1:
@@ -136,6 +137,7 @@ class LabelGui:
         self._refresh_switch_list_box()
         self._refresh_track_list_box()
         self._refresh_track_drawing_attributes()
+        self._read_scene_tags()
 
     def _refresh_track_drawing_attributes(self):
         self.splines_tracks()
@@ -157,6 +159,15 @@ class LabelGui:
         self.window["track.relpos.left"].update(False)
         self.window["track.relpos.ego"].update(False)
         self.window["track.relpos.right"].update(False)
+
+    def _write_scene_tags(self):
+        self.scene.tags = self.values["scene.tags"]
+
+    def _read_scene_tags(self):
+        available_tags = list({*self.scene.settings["tags"], *self.scene.tags})
+        indexes = [available_tags.index(tag) for tag in self.scene.tags]
+        self.window["scene.tags"].update(available_tags)
+        self.window["scene.tags"].update(set_to_index=indexes)
 
     def new_track(self) -> None:
         """
