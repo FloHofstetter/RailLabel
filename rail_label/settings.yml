@@ -1,0 +1,6 @@
+# Real world constants
+track_bed_width: 1435  # mm
+rail_width: 67  # mm
+
+# Tool parameters
+marker_interpolation_steps: 15  # steps
