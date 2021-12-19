@@ -5,25 +5,25 @@ def settings_window_layout():
     # Track drawing attributes
     tracks_marks = sg.Checkbox(
         "marks",
-        key="tracks_marks",
+        key="track.marks",
         enable_events=True,
         default=True,
     )
     tracks_fill = sg.Checkbox(
         "fill",
-        key="tracks_fill",
+        key="track.fill",
         enable_events=True,
         default=True,
     )
     tracks_grid = sg.Checkbox(
         "grid",
-        key="tracks_grid",
+        key="track.grid",
         enable_events=True,
         default=False,
     )
     tracks_splines = sg.Checkbox(
         "splines",
-        key="tracks_splines",
+        key="track.splines",
         enable_events=True,
         default=False,
     )
@@ -34,7 +34,7 @@ def settings_window_layout():
         default_value=0.5,
         orientation="h",
         expand_x=True,
-        key="transparency",
+        key="track.transparency",
         enable_events=True,
     )
     track_draw_layout = [

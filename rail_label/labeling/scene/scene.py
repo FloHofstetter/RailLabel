@@ -10,7 +10,6 @@ from rail_label.labeling.track.track import RailPoint
 from rail_label.labeling.scene.point import ImagePoint
 from rail_label.labeling.track.track import Track
 from rail_label.labeling.switch.switch import Switch
-from rail_label.labeling.switch.switch import Switch
 from rail_label.labeling.track.rail import Rail
 from rail_label.utils.camera import Camera
 from rail_label.utils.mouse import Mouse
@@ -49,7 +48,7 @@ class Scene:
         self._tracks: dict[int, Track] = {}
         self._active_track: Union[Track, None] = None
         self._redraw_tracks = True
-        self._tracks_alpha: float = 0.5
+        self._tracks_transparency: float = 0.5
         self._track_image_cache = None
         self._show_tracks_splines = False
         self._show_tracks_marks = True
@@ -126,13 +125,13 @@ class Scene:
         self._show_tracks_splines = show_tracks_splines
 
     @property
-    def tracks_alpha(self) -> float:
-        return self._tracks_alpha
+    def tracks_transparency(self) -> float:
+        return self._tracks_transparency
 
-    @tracks_alpha.setter
-    def tracks_alpha(self, tracks_alpha) -> None:
+    @tracks_transparency.setter
+    def tracks_transparency(self, tracks_transparency) -> None:
         self._redraw_tracks = True
-        self._tracks_alpha = tracks_alpha
+        self._tracks_transparency = tracks_transparency
 
     @property
     def camera(self):
@@ -414,16 +413,16 @@ class Scene:
                         grid_polygon_image, [points_arr], True, (0, 255, 0), thickness=3
                     )
         # Blend track images
-        splines_alpha = self.tracks_alpha
+        splines_alpha = self.tracks_transparency
         cv2.addWeighted(
             splines_image, splines_alpha, image, 1 - splines_alpha, 0, image
         ) if self._show_tracks_splines else None
         # cv2.addWeighted(grid_points_image, marks_alpha, image, 1 - marks_alpha, 0, image)
-        polygons_alpha = self.tracks_alpha
+        polygons_alpha = self.tracks_transparency
         cv2.addWeighted(
             grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image
         ) if self.show_tracks_fill or self.show_tracks_grid else None
-        marks_alpha = self.tracks_alpha
+        marks_alpha = self.tracks_transparency
         cv2.addWeighted(
             marks_image, marks_alpha, image, 1 - marks_alpha, 0, image
         ) if self._show_tracks_marks else None

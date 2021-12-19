@@ -177,28 +177,31 @@ class LabelGui:
         """
         if self.values["track.active.track"]:
             track_id = self.values["track.active.track"][0].id
-            print(track_id)
             self.scene.activate_track(track_id)
 
     def fill_tracks(self) -> None:
         """
         Process event 'fill track' checkbox checked.
         """
+        self.scene.fill_tracks = self.values["track.fill"]
 
     def grid_tracks(self) -> None:
         """
         Process event 'grid track' checkbox checked.
         """
+        self.scene.show_tracks_grid = self.values["track.grid"]
 
     def splines_tracks(self) -> None:
         """
         Process event 'splines track' checkbox checked.
         """
+        self.scene.show_tracks_splines = self.values["track.splines"]
 
     def transparency_tracks(self) -> None:
         """
         Process event track transparency slider is changed.
         """
+        self.scene.tracks_transparency = self.values["track.transparency"]
 
     def _refresh_switch_list_box(self) -> None:
         """
@@ -317,9 +320,8 @@ class LabelGui:
             elif self.event == "tracks_splines":
                 pass
                 # Show track splines
-            elif self.event == "transparency":
-                pass
-                # Transparency of tracks
+            elif self.event == "track.transparency":
+                self.transparency_tracks()
             elif input_key == ord("s"):
                 self.scene.stencil.toggle_mode() if self.scene.tracks_mode else None
             elif input_key == ord("d"):
