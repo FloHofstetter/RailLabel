@@ -255,6 +255,7 @@ def settings_window_layout():
         [tabs_and_tags_column],
         [
             sg.Button("Previous"),
+            sg.Text("xxx of xxx", key="scene.counter"),
             sg.Button("Next"),
             sg.Button("Exit", button_color="red"),
         ],

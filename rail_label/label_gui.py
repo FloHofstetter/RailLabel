@@ -138,6 +138,7 @@ class LabelGui:
         self._refresh_track_list_box()
         self._refresh_track_drawing_attributes()
         self._read_scene_tags()
+        self._refresh_scene_counter()
 
     def _refresh_track_drawing_attributes(self):
         self.splines_tracks()
@@ -165,6 +166,7 @@ class LabelGui:
 
     def _read_scene_tags(self):
         available_tags = list({*self.scene.settings["tags"], *self.scene.tags})
+        available_tags = sorted(available_tags)
         indexes = [available_tags.index(tag) for tag in self.scene.tags]
         self.window["scene.tags"].update(available_tags)
         self.window["scene.tags"].update(set_to_index=indexes)
@@ -230,6 +232,14 @@ class LabelGui:
         Process event track transparency slider is changed.
         """
         self.scene.tracks_transparency = self.values["track.transparency"]
+
+    def _refresh_scene_counter(self) -> None:
+        """
+        Refresh the numbers of scene counter.
+        """
+        total = len(self.dataset)
+        actual = self.dataset_counter + 1
+        self.window["scene.counter"].update(f"{actual: 04d} of {total: 04d}")
 
     def _refresh_switch_list_box(self) -> None:
         """
