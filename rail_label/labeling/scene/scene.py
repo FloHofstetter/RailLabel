@@ -276,11 +276,15 @@ class Scene:
             splines_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
-                for mark in track.left_rail.splines(15):
+                for mark in track.left_rail.splines(
+                    self._settings["marker_interpolation_steps"]
+                ):
                     cv2.circle(
                         splines_image, mark.point, 2, color=(255, 0, 0), thickness=-1
                     )
-                for mark in track.right_rail.splines(15):
+                for mark in track.right_rail.splines(
+                    self._settings["marker_interpolation_steps"]
+                ):
                     cv2.circle(
                         splines_image, mark.point, 2, color=(0, 255, 0), thickness=-1
                     )
@@ -288,7 +292,9 @@ class Scene:
             grid_points_image: np.ndarray = image.copy()
             for track in self._tracks.values():
                 mark: RailPoint
-                for mark in track.left_rail.contour_points(self._camera, 15):
+                for mark in track.left_rail.contour_points(
+                    self._camera, self._settings["marker_interpolation_steps"]
+                ):
                     cv2.circle(
                         grid_points_image,
                         mark.point,
@@ -296,7 +302,9 @@ class Scene:
                         color=(255, 0, 0),
                         thickness=-1,
                     )
-                for mark in track.right_rail.contour_points(self._camera, 15):
+                for mark in track.right_rail.contour_points(
+                    self._camera, self._settings["marker_interpolation_steps"]
+                ):
                     cv2.circle(
                         grid_points_image,
                         mark.point,
@@ -312,9 +320,12 @@ class Scene:
                 points_arr: np.ndarray
                 # Rails
                 for rail in [track.left_rail, track.right_rail]:
-                    points = [
-                        point.point for point in rail.contour_points(self._camera, 15)
-                    ]
+                    points = []
+                    for point in rail.contour_points(
+                        self._camera, self._settings["marker_interpolation_steps"]
+                    ):
+                        points.append(point.point)
+
                     # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                     points_arr = np.array(points).astype(np.int32)
                     if self.show_tracks_fill and len(points) > 1:
@@ -362,10 +373,12 @@ class Scene:
                                 thickness=3,
                             )
                 # Trackbed
-                points = [
-                    point.point
-                    for point in track.track_bed_spline_points(self._camera, 15)
-                ]
+                points = []
+                for point in track.track_bed_spline_points(
+                    self._camera, self._settings["marker_interpolation_steps"]
+                ):
+                    points.append(point.point)
+
                 # Polylines expects 32-bit integer https://stackoverflow.com/a/18817152/4835208
                 points_arr = np.array(points).astype(np.int32)
                 if self.show_tracks_fill and len(points) > 1:
