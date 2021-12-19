@@ -12,12 +12,19 @@ def parse_yaml():
     data = yaml.parse()
 
 
-def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
+def parse_cli() -> dict:
     """
     Parse CLI arguments.
     :param parser: Argument parser Object.
     :return: CLI Arguments object.
     """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-s",
+        "--settings_path",
+        type=str,
+        help="Path to settings YAML-file for RailLabel.",
+    )
     parser.add_argument(
         "-d",
         "--dataset_path",
@@ -25,42 +32,35 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
         help="Path to the directory containing a dataset.",
         default=".",
     )
-    parser.add_argument(
-        "-s",
-        "--settings_path",
-        type=str,
-        help="Path to settings YAML-file for RailLabel.",
-    )
-    return parser.parse_args()
+    return vars(parser.parse_args())
 
 
-def configure_paths(args: argparse.Namespace) -> dict[str, pathlib.Path]:
+def parse_settings() -> dict[str, pathlib.Path]:
     """
-    Set up paths.
-    :param args: CLI arguments
+    Get configuration for label tool. Standard configuration is in YAML file.
+    These are overwritten by CLI arguments.
     :return: Dictionary containing paths
     """
-    paths = {}
-    # Settings YAML
-    if args.settings_path:
-        paths["settings"] = pathlib.Path(args.settings_path)
-    else:
-        paths["settings"] = pathlib.Path("settings.yml")
-    # Dataset
-    paths["data_set"] = pathlib.Path(args.dataset_path)
+    # Parse CLI arguments
+    cli_args = parse_cli()
+    yaml_path = (
+        cli_args["settings_path"]
+        if cli_args["settings_path"]
+        else pathlib.Path("settings.yml")
+    )
 
-    return paths
+    # Parse YAML arguments
+    with open(yaml_path) as file_pointer:
+        yaml_args = yaml.load(file_pointer, yaml.Loader)
+    settings = {**yaml_args, **cli_args}
+
+    return settings
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    args = parse_args(parser)
+    settings = parse_settings()
 
-    paths: dict[str, pathlib.Path]
-    paths = configure_paths(args)
-
-    # RailLabel main object
-    label_gui = LabelGui(paths["data_set"])
+    label_gui = LabelGui(settings)
     label_gui.event_loop()
 
 

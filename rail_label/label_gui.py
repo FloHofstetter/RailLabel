@@ -12,9 +12,13 @@ from rail_label.labeling.gui.simple_gui import settings_window_layout
 class LabelGui:
     def __init__(
         self,
-        dataset_path: pathlib.Path,
+        settings: dict,
     ) -> None:
         """ """
+        # Settings
+        self.settings: dict = settings
+        dataset_path: pathlib.Path = settings["dataset_path"]
+
         # PySimpleGUI window
         layout = settings_window_layout()
         self.window: sg.Window = sg.Window("Label-tool settings", layout)

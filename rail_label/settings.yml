@@ -2,5 +2,10 @@
 track_bed_width: 1435  # mm
 rail_width: 67  # mm
 
-# Tool parameters
+## Label tool parameters
+# Calculations
 marker_interpolation_steps: 15  # steps
+# GUI colors
+
+## Pipeline script config
+
