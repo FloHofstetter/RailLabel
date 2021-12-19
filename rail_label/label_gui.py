@@ -125,7 +125,7 @@ class LabelGui:
         image = self.dataset[self.dataset_counter]["image"]
         annotations = self.dataset[self.dataset_counter]["annotations"]
         camera_yml = self.dataset[self.dataset_counter]["camera_yml"]
-        self.scene = Scene(self.cv2_window_name, image, camera_yml)
+        self.scene = Scene(self.cv2_window_name, image, camera_yml, self.settings)
         self.scene.from_dict(annotations) if annotations else None
         self.scene.tracks_mode = (
             True if self.values["mode.tab"] == "track.tab" else False

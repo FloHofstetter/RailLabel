@@ -10,12 +10,14 @@ class Stencil:
 
     """
 
-    def __init__(self):
+    def __init__(self, track_bed_width: int, rail_width: int):
         """
-
-        :param camera: Camera class calculating pixel/world coordinates.
-        :param mouse: Mouse class to handle input.
+        :param track_bed_width: Distance from left rail right edge
+                                to right rail left edge
+        :param rail_width: Width of one rail
         """
+        self.track_bed_width: int = track_bed_width
+        self.rail_width: int = rail_width
         self._left_rail_point = 0
         self._center_rail_point = 1
         self._right_rail_point = 1
@@ -73,9 +75,10 @@ class Stencil:
 
         :return: None
         """
+        rail_midpoint_distance: int = self.track_bed_width + self.rail_width
         l_rail_px = mouse.position
         l_rail_wd = camera.pixel_to_world(l_rail_px)
-        r_rail_wd = l_rail_wd + np.array([1502, 0, 0])
+        r_rail_wd = l_rail_wd + np.array([rail_midpoint_distance, 0, 0])
         r_rail_px = camera.world_to_pixel(r_rail_wd)
         width = r_rail_px[0] - l_rail_px[0]
         width = width if width > 0 else 1

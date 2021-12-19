@@ -21,8 +21,13 @@ class Scene:
     """
 
     def __init__(
-        self, window_name: str, image: np.ndarray, camera_parameters: pathlib.Path
+        self,
+        window_name: str,
+        image: np.ndarray,
+        camera_parameters: pathlib.Path,
+        settings: dict,
     ) -> None:
+        self._settings: dict = settings
         self._window_name: str = window_name
         self._camera = Camera(camera_parameters)
 
@@ -31,7 +36,9 @@ class Scene:
         self._switches_mode: bool = False
 
         # Aiming devices
-        self.stencil = Stencil()
+        track_bed_width: int = self._settings["track_bed_width"]
+        rail_width: int = self._settings["rail_width"]
+        self.stencil: Stencil = Stencil(track_bed_width, rail_width)
         self.crosshair = CrossHair(image.shape[0], image.shape[1])
         self._aiming_device_image_cache: Union[np.ndarray, None] = None
 

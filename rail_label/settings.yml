@@ -3,6 +3,8 @@ track_bed_width: 1435  # mm
 rail_width: 67  # mm
 
 ## Label tool parameters
+# Paths
+dataset_path: .
 # Calculations
 marker_interpolation_steps: 15  # steps
 # GUI colors
