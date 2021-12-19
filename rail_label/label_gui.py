@@ -131,6 +131,13 @@ class LabelGui:
         )
         self._refresh_switch_list_box()
         self._refresh_track_list_box()
+        self._refresh_track_drawing_attributes()
+
+    def _refresh_track_drawing_attributes(self):
+        self.splines_tracks()
+        self.fill_tracks()
+        self.grid_tracks()
+        self.show_marks()
 
     def _refresh_track_list_box(self) -> None:
         """
@@ -183,7 +190,7 @@ class LabelGui:
         """
         Process event 'marks track' checkbox checked.
         """
-        self.scene.fill_tracks = self.values["track.marks"]
+        self.scene.show_tracks_marks = self.values["track.marks"]
 
     def fill_tracks(self) -> None:
         """
