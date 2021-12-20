@@ -26,7 +26,6 @@ class Switch:
         """
         :param fork: Fork(True) or merge(False)
         :param right: Right(True) or left(False)
-        :param state: Open(True) or closed(False)
         """
         self._id = switch_id
         self._fork: bool = fork
