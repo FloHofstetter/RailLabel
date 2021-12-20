@@ -255,8 +255,6 @@ class Scene:
         """
         Draw track related items.
         :param image: Image to draw on
-        :param splines: Draw splines
-        :param marks: Draw marks
         :param grid_points: Draw grid
         """
         track_to_color: dict = {
