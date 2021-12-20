@@ -283,6 +283,7 @@ class Scene:
                     cv2.circle(
                         marks_image, mark.point, 5, color=(0, 0, 255), thickness=-1
                     )
+        # Draw splines
         if self._show_tracks_splines:
             splines_image: np.ndarray = image.copy()
             for track in self._tracks.values():
@@ -299,6 +300,7 @@ class Scene:
                     cv2.circle(
                         splines_image, mark.point, 2, color=(0, 255, 0), thickness=-1
                     )
+        # Draw grid
         if grid_points:
             grid_points_image: np.ndarray = image.copy()
             for track in self._tracks.values():
@@ -436,18 +438,35 @@ class Scene:
                     )
         # Blend track images
         splines_alpha = self.tracks_transparency
-        cv2.addWeighted(
-            splines_image, splines_alpha, image, 1 - splines_alpha, 0, image
-        ) if self._show_tracks_splines else None
-        # cv2.addWeighted(grid_points_image, marks_alpha, image, 1 - marks_alpha, 0, image)
+        if self._show_tracks_splines:
+            cv2.addWeighted(
+                splines_image,
+                splines_alpha,
+                image,
+                1 - splines_alpha,
+                0,
+                image,
+            )
         polygons_alpha = self.tracks_transparency
-        cv2.addWeighted(
-            grid_polygon_image, polygons_alpha, image, 1 - polygons_alpha, 0, image
-        ) if self.show_tracks_fill or self.show_tracks_grid else None
+        if self.show_tracks_fill or self.show_tracks_grid:
+            cv2.addWeighted(
+                grid_polygon_image,
+                polygons_alpha,
+                image,
+                1 - polygons_alpha,
+                0,
+                image,
+            )
         marks_alpha = self.tracks_transparency
-        cv2.addWeighted(
-            marks_image, marks_alpha, image, 1 - marks_alpha, 0, image
-        ) if self._show_tracks_marks else None
+        if self._show_tracks_marks:
+            cv2.addWeighted(
+                marks_image,
+                marks_alpha,
+                image,
+                1 - marks_alpha,
+                0,
+                image,
+            )
 
     def add_switch_mark(self):
         """
