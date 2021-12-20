@@ -1,14 +1,14 @@
-name: labeltool
+name: RailLabel
 channels:
+  - conda-forge
 dependencies:
+  - python=3.9
+  - opencv
+  - black
+  - pyyaml
+  - tabulate
   - pip:
-    - opencv-python
-    - numpy
-    - tabulate
-    - splines
-    - iteration-utilities
-    - PySimpleGUI
-    - setuptools
-    - black
-    - pre-commit
-    - pyyaml
+      - splines
+      - iteration-utilities
+      - pre-commit
+      - PySimpleGUI
