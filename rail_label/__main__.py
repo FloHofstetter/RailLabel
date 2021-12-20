@@ -4,12 +4,15 @@ from rail_label.label_gui import LabelGui
 import yaml
 
 
-def parse_yaml():
+def parse_yaml(yaml_path: pathlib.Path) -> dict:
     """
     Parse configuration from YAML.
+    :param yaml_path: Path to settings file
     :return:
     """
-    data = yaml.parse()
+    with open(yaml_path) as file_pointer:
+        yaml_args = yaml.load(file_pointer, yaml.Loader)
+    return yaml_args
 
 
 def parse_cli() -> dict:
@@ -43,15 +46,13 @@ def parse_settings() -> dict[str, pathlib.Path]:
     """
     # Parse CLI arguments
     cli_args = parse_cli()
-    yaml_path = (
-        cli_args["settings_path"]
-        if cli_args["settings_path"]
-        else pathlib.Path("settings.yml")
-    )
+    if cli_args["settings_path"]:
+        yaml_path = cli_args["settings_path"]
+    else:
+        yaml_path = pathlib.Path("settings.yml")
 
-    # Parse YAML arguments
-    with open(yaml_path) as file_pointer:
-        yaml_args = yaml.load(file_pointer, yaml.Loader)
+    yaml_args = parse_yaml(yaml_path)
+
     settings = {**yaml_args, **cli_args}
 
     return settings
