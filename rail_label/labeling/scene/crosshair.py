@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from rail_label.utils.mouse import Mouse
+from utils.mouse import Mouse
 
 
 class CrossHair:

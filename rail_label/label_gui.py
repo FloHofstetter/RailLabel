@@ -3,10 +3,10 @@ import pathlib
 import cv2
 import PySimpleGUI as sg
 from typing import Union, Optional
-from rail_label.utils.mouse import Mouse
-from rail_label.utils.data_set import DataSet
-from rail_label.labeling.scene.scene import Scene
-from rail_label.labeling.gui.simple_gui import settings_window_layout
+from utils.mouse import Mouse
+from utils.data_set import DataSet
+from labeling.scene.scene import Scene
+from labeling.gui.simple_gui import settings_window_layout
 
 
 class LabelGui:

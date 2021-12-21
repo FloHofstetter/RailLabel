@@ -4,15 +4,15 @@ import cv2
 import numpy as np
 from typing import Union
 
-from rail_label.labeling.scene.stencil import Stencil
-from rail_label.labeling.scene.crosshair import CrossHair
-from rail_label.labeling.track.track import RailPoint
-from rail_label.labeling.scene.point import ImagePoint
-from rail_label.labeling.track.track import Track
-from rail_label.labeling.switch.switch import Switch
-from rail_label.labeling.track.rail import Rail
-from rail_label.utils.camera import Camera
-from rail_label.utils.mouse import Mouse
+from labeling.scene.stencil import Stencil
+from labeling.scene.crosshair import CrossHair
+from labeling.track.track import RailPoint
+from labeling.scene.point import ImagePoint
+from labeling.track.track import Track
+from labeling.switch.switch import Switch
+from labeling.track.rail import Rail
+from utils.camera import Camera
+from utils.mouse import Mouse
 
 
 class Scene:

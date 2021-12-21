@@ -2,9 +2,9 @@ from typing import List, Type
 
 import numpy as np
 import cv2
-from rail_label.utils.mouse import Mouse
-from rail_label.labeling.scene.crosshair import CrossHair
-from rail_label.labeling.scene.point import ImagePoint
+from utils.mouse import Mouse
+from labeling.scene.crosshair import CrossHair
+from labeling.scene.point import ImagePoint
 
 
 class BoundingBox:

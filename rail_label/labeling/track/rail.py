@@ -3,8 +3,8 @@ import functools
 import numpy
 import splines
 import numpy as np
-from rail_label.labeling.scene.point import ImagePoint
-from rail_label.utils.camera import Camera
+from labeling.scene.point import ImagePoint
+from utils.camera import Camera
 
 
 class RailPoint(ImagePoint):

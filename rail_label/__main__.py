@@ -1,6 +1,6 @@
 import pathlib
 import argparse
-from rail_label.label_gui import LabelGui
+from label_gui import LabelGui
 import yaml
 
 
