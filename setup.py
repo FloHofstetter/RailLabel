@@ -35,7 +35,7 @@ setup(
         "pre-commit",
         "pyyaml",
     ],
-    keywords=["python", "video", "railway", "rail", "train", "labeling", "pyyaml"],
+    keywords=["python", "video", "railway", "rail", "train", "labeling"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
