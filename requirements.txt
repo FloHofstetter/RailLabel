@@ -8,3 +8,4 @@ setuptools
 black
 pre-commit
 pyyaml
+pillow

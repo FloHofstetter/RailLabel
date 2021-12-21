@@ -7,6 +7,7 @@ dependencies:
   - black
   - pyyaml
   - tabulate
+  - pillow
   - pip:
       - splines
       - iteration-utilities

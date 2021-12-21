@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 DESCRIPTION = "Perspective label tool for railways"
 LONG_DESCRIPTION = (
     "A package that allows to annotate complex scenes on video images from railways."
@@ -34,12 +34,13 @@ setup(
         "black",
         "pre-commit",
         "pyyaml",
+        "pillow",
     ],
-    keywords=["python", "video", "railway", "rail", "train", "labeling", "pyyaml"],
+    keywords=["python", "video", "railway", "rail", "train", "labeling"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.9",
         "Operating System :: Unix",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
