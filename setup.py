@@ -34,6 +34,7 @@ setup(
         "black",
         "pre-commit",
         "pyyaml",
+        "pillow",
     ],
     keywords=["python", "video", "railway", "rail", "train", "labeling"],
     classifiers=[
