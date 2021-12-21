@@ -30,6 +30,10 @@ setup(
         "splines",
         "iteration-utilities",
         "PySimpleGUI",
+        "setuptools",
+        "black",
+        "pre-commit",
+        "pyyaml",
     ],
     keywords=["python", "video", "railway", "rail", "train", "labeling", "pyyaml"],
     classifiers=[
