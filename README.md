@@ -5,65 +5,41 @@
 [[_TOC_]]
 
 # Installation
-Label tool can be installed in multiple ways.
-The preferred way is to install as python package.
 
+## Use case 1 - You want to use RailLabel with GUI to mark scenes:
+You are a student or a member of the team, and you want to help to
+extend our dataset by tagging images with the help of a GUI.
 
-## Install as python package on Windows(recommended)
-0. Install Anaconda or Miniconda. Download here: https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html
-1. Start Anaconda Prompt
-2. Create virtual environment with a python version 3.9:
-```commandline
-conda create --name <env_name> python=3.9
-```
-3. Activate virtual environment:
-```commandline
-conda activate <env_name>
-```
-4. Install the package`rail-label`. User wide installation with the `--user` flag  
-```commandline
-pip install git+https://gitlab.rz.htw-berlin.de/se_perception/raillabel.git
-```
-Optionally via ssh:
-```commandline
-pip install git+ssh://git@github.com/FloHofstetter/labeltool.git
-```
+1. Python interpreter:  
+    If you are experienced you can also install your packages via pip.
+    But on Windows there is no QT version of OpenCV available and the
+    function is limited. Linux works just fine with pip.
+    If you are inexperienced just follow the instructions.
+    - Install Miniconda (sufficient and small) or Anaconda:
+      [Instructions](https://docs.conda.io/projects/conda/en/latest/user-guide/install/)
+2. Clone this GIT-repository
+   - `git clone git@gitlab.rz.htw-berlin.de:se_perception/raillabel.git`
+   - OR: `git@gitlab.rz.htw-berlin.de:se_perception/raillabel.git`
+3. Create, activate and install required packages into environment:
+   - Open Terminal and chane directory to the repository root
+   - `conda env update --file environment.yml --prune`
+   - Activate conda environment: `conda activate RailLabel`
+4. Launch the tool `python rail_label/__man__.py -d <path to dataset>`
+
+## Use case 2 - You want to integrate RailLabel as a package
+You are a student or team member, and you are building a neural
+network or classical image processing algorithm, and you need labels
+according to the YOLO scheme or segmentation masks.
+This project should be integrated as a module in your project so
+that you can generate your labels from the dataset.
+
+1. TBD
+
 
 ## Install as python package on Linux(recommended)
 You may install this package system-wide, user-wide or in a virtual environment.
 0. If necessary, create and activate the environment. Minimum python version is 3.9.
-```commandline
-python3 -m venv venv
-```
-```commandline
-source activate <environment name>/bin/activate
-```
-1. Install the package`rail-label`. User wide installation with the `--user` flag  
-```commandline
-pip install git+https://gitlab.rz.htw-berlin.de/se_perception/raillabel.git
-```
-Optionally via ssh:
-```commandline
-pip install git@gitlab.rz.htw-berlin.de:se_perception/raillabel.git
-```
 
-## Optional: Clone and launch manually
-1. Clone this repository
-```commandline
-git clone https://gitlab.rz.htw-berlin.de/se_perception/raillabel.git
-```
-Optionally via ssh:
-```commandline
-git@gitlab.rz.htw-berlin.de:se_perception/raillabel.git
-```
-2. Create virtual environment and activate
-```commandline
-python3 -m venv venv
-```
-3. Install required packages
-```commandline
-pip install -r requirements.txt
-```
 
 # Expectations for the data structure
 In order to work together efficiently, it is highly recommended to use the
