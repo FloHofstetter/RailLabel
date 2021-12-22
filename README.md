@@ -65,6 +65,18 @@ pip install -r requirements.txt
 ```
 
 ## Application
+<div id="container" style="white-space:nowrap">
+    <div id="image" style="display:inline;">
+        <img src="images/RailLabel_GUI_track_mode.png">
+    </div>
+    <div id="texts" style="display:inline; white-space:nowrap;"> 
+        <img src="images/RailLabel_GUI_switch_mode.png">
+    </div>
+    <div align="center">
+        <img src="images/RailLabel_OpenCV_Window.png">
+    </div>
+</div>
+
 Describe Dataset. images must be in subfolder named 'image'. Do other folders (camera, annotations...) have to be there as well?
 Provide path to a dataset on the ML-Server. Make sure, everyone has rights.
 
