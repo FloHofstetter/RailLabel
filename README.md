@@ -70,27 +70,14 @@ Track tab                                    |  Switch Tab
 ![](images/RailLabel_GUI_track_mode.png)     |  ![](images/RailLabel_GUI_switch_mode.png)
 ![](images/RailLabel_OpenCV_track_mode.png)  |  ![](images/RailLabel_OpenCV_switch_mode.png)
 
-Describe Dataset. images must be in subfolder named 'image'. Do other folders (camera, annotations...) have to be there as well?
-Provide path to a dataset on the ML-Server. Make sure, everyone has rights.
-
-1. Change in the dataset directory
-```commandline
-cd ~/dataset
-```
-2. Start labeltool
-```commandline
-python3 -m rail_label
-```
-Optional start with dataset path as CLI argument:
-```commandline
-python3 -m rail_label --data_path <dataset path>
-```
-
-3. General:
+1. General:
+    - Check all `tags` which describe conditions on the scene.
+      This independent of the current mode.
+      [YouTube-Video](https://youtu.be/t0UTeER5TgE)
     - Scenes are saved by clicking ether `Previous`, `Next` or `Exit`
     - Name of the scene is shown in the GUI
     - Files are iterated in alphabetical order
-4. Mark Rails
+3. Mark Rails
    - Mark Rails [YouTube-Video](https://youtu.be/hgdwvG3IWCg):
      - Select the Scene you want to work on by clicking 
        `Next` or `Previous`
@@ -109,7 +96,7 @@ python3 -m rail_label --data_path <dataset path>
    - Delete Track [YouTube-Video](https://youtu.be/hpP2G-qB0GE)
      - Select the track in the list
      - Push the `Del Track` button
-5. Mark Switches   
+4. Mark Switches   
     - Mark switches: [YouTube-Video](https://youtu.be/YMTCZgf2HCM)  
         - Select the Scene you want to work on by clicking 
         `Next` or `Previous`  
