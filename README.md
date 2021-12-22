@@ -76,8 +76,31 @@ cd ~/dataset
 ```commandline
 python3 -m rail_label
 ```
-
 Optional start with dataset path as CLI argument:
 ```commandline
 python3 -m rail_label --data_path <dataset path>
 ```
+
+3. General:
+    - Scenes are saved by clicking ether `Previous`, `Next` or `Exit`
+    - Name of the scene is shown in the GUI
+    - Files are iterated in alphabetical order
+4. Mark Rails
+5. Mark Switches   
+    - Mark switches: [YouTube-Video](https://youtu.be/YMTCZgf2HCM)  
+        - Select the Scene you want to work on by clicking 
+        `Next` or `Previous`  
+        - Select the Tab `Switch` to get into the Switch-mode  
+        - Select the attributes of the new switch (radio buttons)   
+        - Click `New switch` to create one
+        - Select the switch in the list
+        - Focus the Image window and aim at te first mark and press `F`
+        - Aim at the second point and press `F`
+    - Correct Mark / Delete Switches: 
+      [YouTube-Video](https://youtu.be/MFqepueAOh0)
+        - Select the switch in the list
+        - Focus the Image window and aim roughly at the mark you
+          want to correct
+        - Press `R` to remove the mark
+        - Aim and press `F` to set the corrected mark
+        - Press `Delete Switch` to remove an entire switch
