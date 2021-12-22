@@ -67,10 +67,10 @@ pip install -r requirements.txt
 ## Application
 <div id="container" style="white-space:nowrap">
     <div id="image" style="display:inline;">
-        <img src="images/RailLabel_GUI_track_mode.png">
+        <img src="images/RailLabel_GUI_track_mode.png" style="max-width:50%">
     </div>
     <div id="texts" style="display:inline; white-space:nowrap;"> 
-        <img src="images/RailLabel_GUI_switch_mode.png">
+        <img src="images/RailLabel_GUI_switch_mode.png" style="max-width:50%"">
     </div>
     <div align="center">
         <img src="images/RailLabel_OpenCV_Window.png">
