@@ -86,6 +86,24 @@ python3 -m rail_label --data_path <dataset path>
     - Name of the scene is shown in the GUI
     - Files are iterated in alphabetical order
 4. Mark Rails
+   - Mark Rails [YouTube-Video](https://youtu.be/hgdwvG3IWCg):
+     - Select the Scene you want to work on by clicking 
+       `Next` or `Previous`
+     - Select the Tab `Track` to get into the Switch-mode 
+     - Select the attributes of the new rail (radio buttons)
+     - Click `New Track` to create one
+     - Select the track in the list
+     - Focus the Image window and aim at te first mark and press `F`
+     - Make as many marks as you need until you are satisfied with the result.
+   - Correct Rail Mark [YouTube-Video](https://youtu.be/Frv2Oay0NMs):
+     - Select the track in the list
+     - Focus the Image window and aim roughly at the mark you
+       want to correct
+     - Press `R` to remove the mark
+     - Aim and press `F` to set the corrected mark
+   - Delete Track [YouTube-Video](https://youtu.be/hpP2G-qB0GE)
+     - Select the track in the list
+     - Push the `Del Track` button
 5. Mark Switches   
     - Mark switches: [YouTube-Video](https://youtu.be/YMTCZgf2HCM)  
         - Select the Scene you want to work on by clicking 
