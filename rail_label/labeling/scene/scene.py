@@ -599,27 +599,6 @@ class Scene:
             },
             "tags": self.tags,
         }
-        # TODO: Clean solution for relative coordinates
-        for t_id, t in scene["tracks"].items():
-            rails = ["left rail", "right rail"]
-            for rail in rails:
-                points = []
-                for x, y in t[rail]["points"]:
-                    x /= self._image.shape[1]
-                    y /= self._image.shape[0]
-                    points.append((x, y))
-                scene["tracks"][t_id][rail]["points"] = points
-        for s_id, s in scene["switches"].items():
-            rails = ["left rail", "right rail"]
-            for rail in rails:
-                points = []
-                for x, y in t[rail]["points"]:
-                    x /= self._image.shape[1]
-                    y /= self._image.shape[0]
-                    points.append((x, y))
-                scene["tracks"][t_id][rail]["points"] = points
-        # TODO: Clean solution for relative coordinates (end)
-
         return scene
 
     def from_dict(self, annotations: dict) -> None:
@@ -634,18 +613,9 @@ class Scene:
                 track_obj.left_rail = Rail(67)
                 track_obj.right_rail = Rail(67)
                 for point in track["left rail"]["points"]:
-                    # TODO: Clean solution for relative coordinates
-                    print(self._image.shape)
-                    point[0] = int(point[0] * self._image.shape[1])
-                    point[1] = int(point[1] * self._image.shape[0])
-                    # TODO: Clean solution for relative coordinates (end)
                     rail_points = RailPoint(point[0], point[1])
                     track_obj.left_rail.marks.append(rail_points)
                 for point in track["right rail"]["points"]:
-                    # TODO: Clean solution for relative coordinates
-                    point[0] = int(point[0] * self._image.shape[1])
-                    point[1] = int(point[1] * self._image.shape[0])
-                    # TODO: Clean solution for relative coordinates (end)
                     rail_points = RailPoint(point[0], point[1])
                     track_obj.right_rail.marks.append(rail_points)
                 self._tracks[int(track_id)] = track_obj
