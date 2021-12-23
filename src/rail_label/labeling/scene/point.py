@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Union
 import numpy as np
 
 
@@ -7,14 +8,14 @@ class ImagePoint:
     Represents a point in image coordinates aka. pixel coordinates.
     """
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: Union[int, float], y: Union[int, float]):
         """
-
         :param x: X coordinate
         :param y: Y coordinate
         :return: None
         """
-        self._point: np.ndarray = np.array([x, y])
+        self._point: np.ndarray
+        self._point = np.rint(np.array([x, y])).astype(int)
 
     def __str__(self):
         msg = f"X:{self.x} Y:{self.y}"
