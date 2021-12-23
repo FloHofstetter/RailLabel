@@ -27,13 +27,14 @@ def parse_cli() -> dict:
         "--settings_path",
         type=str,
         help="Path to settings YAML-file for RailLabel.",
+        default="settings.yml",
     )
     parser.add_argument(
         "-d",
         "--dataset_path",
         type=str,
         help="Path to the directory containing a dataset.",
-        default=".",
+        required=True,
     )
     return vars(parser.parse_args())
 
