@@ -27,11 +27,11 @@ class ImagePoint:
 
     @property
     def x(self):
-        return self._point[0]
+        return self._point[0].item()
 
     @property
     def y(self):
-        return self._point[1]
+        return self._point[1].item()
 
     def midpoint(self, other: ImagePoint):
         """
