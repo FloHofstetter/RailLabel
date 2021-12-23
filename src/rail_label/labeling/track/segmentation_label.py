@@ -9,9 +9,9 @@ from typing import Iterable, Union
 
 import numpy as np
 
-from rail_label.utils.data_set import DataSet
-from rail_label.labeling.scene.scene import Scene
-from rail_label.labeling.track.track import RailPoint
+from utils.data_set import DataSet
+from labeling.scene.scene import Scene
+from labeling.track.track import RailPoint
 
 
 class SegmentationLabel:

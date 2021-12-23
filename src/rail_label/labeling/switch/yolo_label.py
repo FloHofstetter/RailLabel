@@ -1,18 +1,13 @@
 import itertools
-from functools import lru_cache
 
-import cv2
 import pathlib
 import argparse
 import yaml
 import concurrent.futures
 from typing import Iterable, Union
 
-import numpy as np
-
-from rail_label.utils.data_set import DataSet
-from rail_label.labeling.scene.scene import Scene
-from rail_label.labeling.track.track import RailPoint
+from utils.data_set import DataSet
+from labeling.scene.scene import Scene
 
 
 class Yolo:
