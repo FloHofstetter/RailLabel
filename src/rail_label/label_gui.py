@@ -52,7 +52,7 @@ class LabelGui:
         Refresh PySimpleGUI window elements.
         """
         # Get window content
-        self.event, self.values = self.window.read(0)
+        self.event, self.values = self.window.read(1)
 
         # Disable 'New track' button if attributes not set.
         if (
@@ -408,5 +408,5 @@ class LabelGui:
                 pass
                 # activate_label(scene, input_key)
 
-            self.refresh_simple_gui()
+            # self.refresh_simple_gui()
             self.refresh_cv_gui()
