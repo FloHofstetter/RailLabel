@@ -28,7 +28,7 @@ class TestImagePoint(unittest.TestCase):
             x: int = 5
             y: int = 10
             image_point: ImagePoint = ImagePoint(x, y)
-            self.assertAlmostEqual(image_point.y, 5)
+            self.assertAlmostEqual(image_point.y, 10)
 
         with self.subTest(msg="Return correct type"):
             x: float = 5.0
