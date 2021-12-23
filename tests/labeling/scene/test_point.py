@@ -45,7 +45,6 @@ class TestImagePoint(unittest.TestCase):
             y: int = 10
             image_point: ImagePoint = ImagePoint(x, y)
             point = np.array([5, 10], dtype=int)
-            print(image_point.point.dtype)
             self.assertTrue(image_point.point.dtype == point.dtype)
 
     def test_m_midpoint(self) -> None:
