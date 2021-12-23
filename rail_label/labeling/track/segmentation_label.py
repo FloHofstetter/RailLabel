@@ -1,6 +1,7 @@
 import itertools
 
 import cv2
+import yaml
 import pathlib
 import argparse
 import concurrent.futures
@@ -18,10 +19,10 @@ class SegmentationLabel:
     Generation of segmentation labels.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, settings):
         self.image = data["image"]
         self._label = np.zeros(data["image"].shape)
-        self.scene = Scene("", data["image"], data["camera_yml"])
+        self.scene = Scene("", data["image"], data["camera_yml"], settings)
         self.scene.from_dict(data["annotations"])
 
     def label(self, color_type="segmentation"):
@@ -118,19 +119,20 @@ class SegmentationLabel:
 def create_label(
     data: dict,
     output_path: pathlib.Path,
+    settings: dict,
     color_type: str = "segmentation",
     verbose=False,
 ) -> None:
     """
-
     :param data:
     :param output_path:
+    :param settings: Dict of RailLabel settings
     :param color_type:
     :param verbose: Verbose std out
     :return:
     """
     if data["annotations"]:
-        segmentation_label: SegmentationLabel = SegmentationLabel(data)
+        segmentation_label: SegmentationLabel = SegmentationLabel(data, settings)
         image: np.ndarray = segmentation_label.label(color_type)
         output_path.mkdir(parents=True, exist_ok=True)
         file_extension: str
@@ -147,6 +149,7 @@ def create_label(
 def create_labels(
     data_set_path: Union[str, pathlib.Path],
     output_path: Union[str, pathlib.Path],
+    settings: dict,
     color_type: str = "segmentation",
     verbose: bool = False,
 ) -> None:
@@ -157,6 +160,7 @@ def create_labels(
     segmentation maks 'segmentation'.
     :param data_set_path: Path to dataset root directory
     :param output_path: Path to store generated masks / labels
+    :param settings: Dict of RailLabel settings
     :param color_type: Type of masks / labels to generate
                        ['human', 'overlay', 'segmentation']
     :param verbose: Verbose std out
@@ -172,20 +176,31 @@ def create_labels(
     arguments = [
         dataset,
         itertools.repeat(output_path),
+        itertools.repeat(settings),
         itertools.repeat(color_type),
         itertools.repeat(verbose),
     ]
+
     with concurrent.futures.ProcessPoolExecutor() as executor:
         executor.map(create_label, *arguments)
 
 
-def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
+def parse_yaml(yaml_path: pathlib.Path) -> dict:
+    """
+    Parse configuration from YAML.
+    :param yaml_path: Path to settings file
+    :return:
+    """
+    with open(yaml_path) as file_pointer:
+        yaml_args = yaml.load(file_pointer, yaml.Loader)
+    return yaml_args
+
+
+def parse_cli() -> dict:
     """
     Parse CLI arguments.
-
-    :param parser: Argument parser Object.
-    :return: CLI Arguments object.
     """
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "-d",
         "--dataset_path",
@@ -207,21 +222,42 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
         action="store_true",
         required=False,
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "-s",
+        "--settings_path",
+        type=str,
+        help="Path to settings YAML-file for RailLabel.",
+    )
+    return vars(parser.parse_args())
+
+
+def parse_settings() -> dict[str, pathlib.Path]:
+    """
+    Get configuration for label tool. Standard configuration is in YAML file.
+    These are overwritten by CLI arguments.
+    :return: Dictionary containing paths
+    """
+    # Parse CLI arguments
+    cli_args = parse_cli()
+    if cli_args["settings_path"]:
+        yaml_path = cli_args["settings_path"]
+    else:
+        yaml_path = pathlib.Path("settings.yml")
+    yaml_args = parse_yaml(yaml_path)
+    settings = {**yaml_args, **cli_args}
+    return settings
 
 
 def main():
-    # Parse arguments from cli
-    parser: argparse.ArgumentParser = argparse.ArgumentParser()
-    args: argparse.Namespace = parse_args(parser)
+    settings = parse_settings()
 
     # Get input and output paths
-    data_set_path: pathlib.Path = pathlib.Path(args.dataset_path)
-    output_path: pathlib.Path = pathlib.Path(args.output_path)
-    verbose: bool = args.verbose
+    data_set_path: pathlib.Path = pathlib.Path(settings["dataset_path"])
+    output_path: pathlib.Path = pathlib.Path(settings["output_path"])
+    verbose: bool = settings["verbose"]
 
     # Create labels
-    create_labels(data_set_path, output_path, "overlay", verbose)
+    create_labels(data_set_path, output_path, settings, "overlay", verbose)
 
 
 if __name__ == "__main__":
