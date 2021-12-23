@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from rail_label.labeling.scene.point import ImagePoint
+from labeling.scene.point import ImagePoint
 
 
 class TestImagePoint(unittest.TestCase):
