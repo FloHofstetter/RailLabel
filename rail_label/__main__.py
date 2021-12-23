@@ -18,8 +18,7 @@ def parse_yaml(yaml_path: pathlib.Path) -> dict:
 def parse_cli() -> dict:
     """
     Parse CLI arguments.
-    :param parser: Argument parser Object.
-    :return: CLI Arguments object.
+    :return: CLI Arguments dict.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
