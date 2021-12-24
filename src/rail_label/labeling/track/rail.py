@@ -32,7 +32,6 @@ class RailPoint(ImagePoint):
         mean: np.ndarray = np.mean((self._point, other._point), axis=0)
         # Pixels are discrete values
         mean = np.rint(mean).astype(int)
-        # TODO: How to create Class from derived Class type, not base class?
         midpoint: RailPoint = RailPoint(mean[0], mean[1])
         return midpoint
 
