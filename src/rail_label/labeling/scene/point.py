@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Union
 import numpy as np
 
@@ -33,7 +32,7 @@ class ImagePoint:
     def y(self):
         return self._point[1].item()
 
-    def midpoint(self, other: ImagePoint):
+    def midpoint(self, other: "ImagePoint"):
         """
         Calculate midpoint between this point and other point.
         :param other: Other point
@@ -42,7 +41,7 @@ class ImagePoint:
         mean: np.ndarray = np.mean((self._point, other._point), axis=0)
         # Pixels are discrete values
         mean = np.rint(mean).astype(int)
-        midpoint: ImagePoint = ImagePoint(mean[0], mean[1])
+        midpoint: ImagePoint = self.__class__(mean[0], mean[1])
         return midpoint
 
 
@@ -53,7 +52,6 @@ class WorldPoint(ImagePoint):
 
     def __init__(self, x: int, y: int, z: int):
         """
-
         :param x: X coordinate
         :param y: Y coordinate
         :param z: Z coordinate
@@ -72,11 +70,7 @@ class WorldPoint(ImagePoint):
 
 
 def main():
-    a = ImagePoint(4, 8)
-    b = WorldPoint(5, 2, 18)
-
-    print(a)
-    print(b)
+    pass
 
 
 if __name__ == "__main__":

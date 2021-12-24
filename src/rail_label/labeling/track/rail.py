@@ -23,18 +23,6 @@ class RailPoint(ImagePoint):
         """
         return self.y < other.y
 
-    def midpoint(self, other: RailPoint):
-        """
-        Calculate midpoint between this point and other point.
-        :param other: Other point
-        :return: Midpoint
-        """
-        mean: np.ndarray = np.mean((self._point, other._point), axis=0)
-        # Pixels are discrete values
-        mean = np.rint(mean).astype(int)
-        midpoint: RailPoint = RailPoint(mean[0], mean[1])
-        return midpoint
-
 
 class Rail:
     """
