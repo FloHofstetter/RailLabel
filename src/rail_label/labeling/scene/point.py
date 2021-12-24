@@ -21,7 +21,7 @@ class ImagePoint:
         return msg
 
     @property
-    def point(self) -> int:
+    def point(self) -> np.ndarray:
         return self._point
 
     @property
@@ -41,7 +41,7 @@ class ImagePoint:
         mean: np.ndarray = np.mean((self._point, other._point), axis=0)
         # Pixels are discrete values
         mean: np.ndarray = np.rint(mean).astype(int)
-        midpoint: ImagePoint = self.__class__(mean[0], mean[1])
+        midpoint: ImagePoint = self.__class__(*mean)
         return midpoint
 
 
@@ -62,7 +62,8 @@ class WorldPoint(ImagePoint):
         :param z: Z coordinate
         """
         super().__init__(x, y)
-        self._point = np.append(self._point, round(z))
+        z: int = np.rint(z).astype(int).item()
+        self._point = np.append(self._point, z)
 
     def __str__(self) -> str:
         msg: str = f"X={self.x} Y={self.y} Z={self.z}"
