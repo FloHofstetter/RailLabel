@@ -100,7 +100,7 @@ class Rail:
         :param camera: Camera translating world- and image
                        coordinates.
         :param steps: Interpolation steps
-        :param side: Part of contour points ['left', 'right' 'both']
+        :param contour_side: Part of contour points ['left', 'right' 'both']
         :return: Points describing rail contour
         """
         contour_points_left: list[RailPoint] = []
