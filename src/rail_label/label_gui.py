@@ -408,5 +408,5 @@ class LabelGui:
                 pass
                 # activate_label(scene, input_key)
 
-            # self.refresh_simple_gui()
+            self.refresh_simple_gui()
             self.refresh_cv_gui()
