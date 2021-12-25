@@ -17,7 +17,7 @@ class ImagePoint:
         self._point = np.rint(np.array([x, y])).astype(int)
 
     def __str__(self) -> str:
-        msg: str = f"X={self.x} Y={self.y}"
+        msg: str = f"x={self.x} y={self.y}"
         return msg
 
     @property
@@ -66,7 +66,7 @@ class WorldPoint(ImagePoint):
         self._point = np.append(self._point, z)
 
     def __str__(self) -> str:
-        msg: str = f"X={self.x} Y={self.y} Z={self.z}"
+        msg: str = f"x={self.x} y={self.y} z={self.z}"
         return msg
 
     @property
