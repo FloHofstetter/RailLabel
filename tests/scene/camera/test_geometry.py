@@ -3,7 +3,7 @@ import numpy as np
 from scene.camera.geometry import Line
 
 
-class TestImagePoint(unittest.TestCase):
+class TestLine(unittest.TestCase):
     def test_p_p(self) -> None:
         """
         Assert the Line.p property.
