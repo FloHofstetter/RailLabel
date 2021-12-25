@@ -14,7 +14,7 @@ class TestLine(unittest.TestCase):
 
             line: Line = Line(p, a)
 
-            self.assertTrue(np.array_equal(line.p, p))
+            assert np.array_equal(line.p, p)
 
         with self.subTest(msg="Return correct type"):
             p: np.ndarray = np.array([5.0, 10.0], dtype=float)
@@ -24,7 +24,7 @@ class TestLine(unittest.TestCase):
 
             p = p.astype(int)
 
-            self.assertTrue(line.p.dtype == p.dtype)
+            assert line.p.dtype == p.dtype
 
     def test_p_a(self) -> None:
         """
@@ -36,7 +36,7 @@ class TestLine(unittest.TestCase):
 
             line: Line = Line(p, a)
 
-            self.assertTrue(np.array_equal(line.a, a))
+            assert np.array_equal(line.a, a)
 
         with self.subTest(msg="Return correct type"):
             p: np.ndarray = np.array([5.0, 10.0], dtype=float)
@@ -46,4 +46,4 @@ class TestLine(unittest.TestCase):
 
             a = a.astype(int)
 
-            self.assertTrue(line.a.dtype == a.dtype)
+            assert line.a.dtype == a.dtype
