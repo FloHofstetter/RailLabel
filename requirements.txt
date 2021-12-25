@@ -4,8 +4,5 @@ tabulate
 splines
 iteration-utilities
 PySimpleGUI
-setuptools
-black
-pre-commit
 pyyaml
 pillow

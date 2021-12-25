@@ -1,0 +1,7 @@
+setuptools
+black
+pre-commit
+tox
+pytest
+pytest-cov
+mypy
