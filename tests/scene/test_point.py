@@ -52,9 +52,11 @@ class TestImagePoint(unittest.TestCase):
         Assert correct calculation of midpoint between two
         ImagePoints.
         """
-        x, y = 5, 10
+        x: int = 5
+        y: int = 10
         image_point_a: ImagePoint = ImagePoint(x, y)
-        x, y = 15, 20
+        x: int = 15
+        y: int = 20
         image_point_b: ImagePoint = ImagePoint(x, y)
 
         image_point_c: ImagePoint = image_point_a.midpoint(image_point_b)
