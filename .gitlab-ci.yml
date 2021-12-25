@@ -5,7 +5,10 @@ python_tests:
   image: python:3.9
   stage: test
   script:
+    - apt-get update
+    - apt-get install ffmpeg libsm6 libxext6 -y
+    - python -m pip install --upgrade pip
     - pip3 install -r requirements.txt
-    - pip3 install pytest
-    - pip3 install pytest-cov
-    - python3 -m pytest
+    - pip3 install -r requirements_dev.txt
+    - pip3 install -e .
+    - pytest
