@@ -2,11 +2,11 @@ import pathlib
 
 import cv2
 import PySimpleGUI as sg
-from typing import Union, Optional
-from utils.mouse import Mouse
-from utils.data_set import DataSet
-from labeling.scene.scene import Scene
-from labeling.gui.simple_gui import settings_window_layout
+from typing import Optional
+from scene.aiming_devices.mouse import Mouse
+from data.data_set import DataSet
+from scene.scene import Scene
+from gui.simple_gui import settings_window_layout
 
 
 class LabelGui:

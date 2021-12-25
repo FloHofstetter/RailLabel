@@ -1,10 +1,9 @@
 from __future__ import annotations
-import functools
 import numpy
 import splines
 import numpy as np
-from labeling.scene.point import ImagePoint
-from utils.camera import Camera
+from scene.point import ImagePoint
+from scene.camera.camera import Camera
 
 
 class RailPoint(ImagePoint):

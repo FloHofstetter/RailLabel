@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from labeling.scene.point import ImagePoint, WorldPoint
+from src.scene.point import ImagePoint, WorldPoint
 
 
 class TestImagePoint(unittest.TestCase):
@@ -150,7 +150,3 @@ class TestWorldPoint(unittest.TestCase):
         self.assertAlmostEqual(world_point_c.x, 12)  # Odd x.5 round down
         self.assertAlmostEqual(world_point_c.y, 18)  # Even x.5 round up
         self.assertAlmostEqual(world_point_c.z, 22)  # Odd x.5 round down
-
-
-if __name__ == "__main__":
-    unittest.main()

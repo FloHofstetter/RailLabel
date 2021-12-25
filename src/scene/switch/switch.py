@@ -1,10 +1,8 @@
-from typing import List, Type
-
 import numpy as np
 import cv2
-from utils.mouse import Mouse
-from labeling.scene.crosshair import CrossHair
-from labeling.scene.point import ImagePoint
+from scene.aiming_devices.mouse import Mouse
+from scene.aiming_devices import CrossHair
+from scene.point import ImagePoint
 
 
 class BoundingBox:

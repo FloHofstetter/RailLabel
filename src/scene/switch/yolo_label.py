@@ -6,8 +6,8 @@ import yaml
 import concurrent.futures
 from typing import Iterable, Union
 
-from utils.data_set import DataSet
-from labeling.scene.scene import Scene
+from data.data_set import DataSet
+from scene import Scene
 
 
 class Yolo:

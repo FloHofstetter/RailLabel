@@ -5,15 +5,15 @@ from PIL import Image
 import numpy as np
 from typing import Union
 
-from labeling.scene.stencil import Stencil
-from labeling.scene.crosshair import CrossHair
-from labeling.track.track import RailPoint
-from labeling.scene.point import ImagePoint
-from labeling.track.track import Track
-from labeling.switch.switch import Switch
-from labeling.track.rail import Rail
-from utils.camera import Camera
-from utils.mouse import Mouse
+from scene.aiming_devices.stencil import Stencil
+from scene.aiming_devices.crosshair import CrossHair
+from scene.track import RailPoint
+from scene.point import ImagePoint
+from scene.track import Track
+from scene.switch import Switch
+from scene.track import Rail
+from scene.camera.camera import Camera
+from scene.aiming_devices.mouse import Mouse
 
 
 class Scene:

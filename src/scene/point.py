@@ -72,11 +72,3 @@ class WorldPoint(ImagePoint):
     @property
     def z(self) -> int:
         return self._point[2].item()
-
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()

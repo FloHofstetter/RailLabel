@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from utils.mouse import Mouse
+from scene.aiming_devices.mouse import Mouse
 
 
 class CrossHair:

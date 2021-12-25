@@ -1,10 +1,5 @@
-import cv2
-import numpy as np
-import splines
-import functools
-
-from utils.camera import Camera
-from labeling.track.rail import Rail, RailPoint
+from scene.camera.camera import Camera
+from scene.track.rail import Rail, RailPoint
 
 
 class Track:

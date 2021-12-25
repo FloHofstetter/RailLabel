@@ -1,6 +1,6 @@
 import pathlib
 import argparse
-from label_gui import LabelGui
+from gui.label_gui import LabelGui
 import yaml
 
 

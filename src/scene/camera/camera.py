@@ -1,7 +1,7 @@
 import pathlib
 from typing import Union
 
-from utils.geometry import Line, Plane, intersection
+from scene.camera.geometry import Line, Plane, intersection
 
 import cv2
 import numpy as np
