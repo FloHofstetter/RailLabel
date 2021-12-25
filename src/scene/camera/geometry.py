@@ -8,8 +8,8 @@ class Line:
 
     def __init__(self, p: np.ndarray, a: np.ndarray):
         """ """
-        self.p: np.ndarray = p
-        self.a: np.ndarray = a
+        self.p: np.ndarray = np.rint(p).astype(int)
+        self.a: np.ndarray = np.rint(a).astype(int)
 
 
 class Plane:
