@@ -62,6 +62,17 @@ class TestImagePoint(unittest.TestCase):
         self.assertAlmostEqual(image_point_c.x, 10)
         self.assertAlmostEqual(image_point_c.y, 15)
 
+    def test_m___str__(self) -> None:
+        """
+        Assert correct string representation of ImagePoint.
+        """
+        x: int = 5
+        y: int = 10
+        image_point: ImagePoint = ImagePoint(x, y)
+
+        string_representation = f"x={x} y={y}"
+        self.assertEqual(str(image_point), string_representation)
+
 
 class TestWorldPoint(unittest.TestCase):
     def test_p_x(self) -> None:
@@ -150,3 +161,15 @@ class TestWorldPoint(unittest.TestCase):
         self.assertAlmostEqual(world_point_c.x, 12)  # Odd x.5 round down
         self.assertAlmostEqual(world_point_c.y, 18)  # Even x.5 round up
         self.assertAlmostEqual(world_point_c.z, 22)  # Odd x.5 round down
+
+    def test_m___str__(self) -> None:
+        """
+        Assert correct string representation of ImagePoint.
+        """
+        x: int = 5
+        y: int = 10
+        z: int = 15
+        world_point: WorldPoint = WorldPoint(x, y, z)
+
+        string_representation = f"x={x} y={y} z={z}"
+        self.assertEqual(str(world_point), string_representation)
