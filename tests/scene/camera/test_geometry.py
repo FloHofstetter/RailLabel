@@ -1,6 +1,7 @@
 import unittest
+import pytest
 import numpy as np
-from scene.camera.geometry import Line
+from scene.camera.geometry import Line, Plane, intersection
 
 
 class TestLine(unittest.TestCase):
@@ -9,41 +10,65 @@ class TestLine(unittest.TestCase):
         Assert the Line.p property.
         """
         with self.subTest(msg="Return correct property"):
-            p: np.ndarray = np.array([5, 10], dtype=int)
-            a: np.ndarray = np.array([10, 20], dtype=int)
+            p: np.ndarray = np.array([5, 10, 15])
+            a: np.ndarray = np.array([10, 20, 30])
 
             line: Line = Line(p, a)
 
             assert np.array_equal(line.p, p)
-
-        with self.subTest(msg="Return correct type"):
-            p: np.ndarray = np.array([5.0, 10.0], dtype=float)
-            a: np.ndarray = np.array([10.0, 20.0], dtype=float)
-
-            line: Line = Line(p, a)
-
-            p = p.astype(int)
-
-            assert line.p.dtype == p.dtype
 
     def test_p_a(self) -> None:
         """
         Assert the Line.a property.
         """
         with self.subTest(msg="Return correct property"):
-            p: np.ndarray = np.array([5, 10], dtype=int)
-            a: np.ndarray = np.array([10, 20], dtype=int)
+            p: np.ndarray = np.array([5, 10, 15])
+            a: np.ndarray = np.array([10, 20, 30])
 
             line: Line = Line(p, a)
 
             assert np.array_equal(line.a, a)
 
-        with self.subTest(msg="Return correct type"):
-            p: np.ndarray = np.array([5.0, 10.0], dtype=float)
-            a: np.ndarray = np.array([10.0, 20.0], dtype=float)
 
-            line: Line = Line(p, a)
+class TestPlane(unittest.TestCase):
+    def test_p_c(self) -> None:
+        """
+        Assert the Plane.c property.
+        """
+        with self.subTest(msg="Return correct property"):
+            c: np.ndarray = np.array([23, 17, 11])
+            r: float = 15.0
 
-            a = a.astype(int)
+            plane: Plane = Plane(c, r)
 
-            assert line.a.dtype == a.dtype
+            assert np.array_equal(plane.c, c)
+
+    def test_p_r(self) -> None:
+        """
+        Assert the Plane.r property.
+        """
+        with self.subTest(msg="Return correct property"):
+            c: np.ndarray = np.array([5, 10])
+            r: float = 15.0
+
+            plane: Plane = Plane(c, r)
+
+            assert plane.r == r
+
+
+@pytest.mark.skip
+def test_m_intersection() -> None:
+    """
+    Assert the Plane.intersection methode.
+    """
+    p: np.ndarray = np.array([5, 10])
+    a: np.ndarray = np.array([10, 20])
+    line: Line = Line(p, a)
+
+    c: np.ndarray = np.array([5, 10], dtype=int)
+    r: float = 15.0
+    plane: Plane = Plane(c, r)
+
+    # intersect = intersection(plane, line)
+    # TODO: Write testcase
+    assert False
