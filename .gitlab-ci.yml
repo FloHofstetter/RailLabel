@@ -12,3 +12,10 @@ python_tests:
     - pip3 install -r requirements_dev.txt
     - pip3 install -e .
     - pytest
+    - coverage report
+    - coverage xml -o coverage.xml
+  artifacts:
+    reports:
+      cobertura: coverage.xml
+    paths:
+      - coverage.xml
