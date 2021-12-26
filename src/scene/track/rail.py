@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Union
 import numpy
 import splines
 import numpy as np
@@ -11,7 +12,7 @@ class RailPoint(ImagePoint):
     Represent point on rail.
     """
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: Union[int, float], y: Union[int, float]):
         super().__init__(x, y)
 
     def __lt__(self, other: RailPoint) -> bool:
