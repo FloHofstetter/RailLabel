@@ -33,11 +33,11 @@ class Rail:
         """
         :param width: Rail width in mm
         """
-        self._width = width
+        self._width: float = width
         self._marks: list[RailPoint] = []
 
     @property
-    def width(self) -> int:
+    def width(self) -> float:
         return self._width
 
     @property
@@ -159,11 +159,3 @@ class Rail:
     def to_dict(self) -> dict:
         rail: dict = {"points": [mark.point.tolist() for mark in self._marks]}
         return rail
-
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()
