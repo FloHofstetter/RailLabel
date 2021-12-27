@@ -77,6 +77,35 @@ class Rail:
         else:
             return []
 
+    def _contour_point(
+        self, camera: Camera, spline_point: RailPoint, side: int
+    ) -> RailPoint:
+        """
+        Calculate points on contour for given side on given spline_point.
+        :param camera: Camera translating world- and image
+                       coordinates
+        :param spline_point: Point on center of rail
+        :param side: Contour side relative to mid of the rail
+        :return: Contur point
+        """
+        # Grid points to the left
+        spline_point_world_arr: np.ndarray
+        spline_point_world_arr = camera.pixel_to_world(spline_point.point)
+        contour_point_world_arr: np.ndarray
+        contour_point_world_arr = spline_point_world_arr
+        # Left side add half of rail width, right side subtracts half of rail width.
+        contour_point_world_arr[0] = spline_point_world_arr[0] + self.width * side / 2
+        contour_point_image_arr: np.ndarray
+        contour_point_image_arr = camera.world_to_pixel(contour_point_world_arr)
+        # Round coordinate because it represents discrete pixels
+        contour_point_image_arr = np.rint(contour_point_image_arr).astype(int)
+        contour_point: RailPoint
+        contour_point = RailPoint(
+            contour_point_image_arr[0],
+            contour_point_image_arr[1],
+        )
+        return contour_point
+
     def contour_points(
         self, camera: Camera, steps: int, contour_side="both"
     ) -> list[RailPoint]:
@@ -95,24 +124,7 @@ class Rail:
         spline_point: RailPoint
         for spline_point in self.splines(steps):
             for side in [-1, 1]:
-                # Grid points to the left
-                spline_point_world_arr: np.ndarray = camera.pixel_to_world(
-                    spline_point.point
-                )
-                contour_point_world_arr: np.ndarray = spline_point_world_arr
-                # Left side add half of rail width, right side subtracts half of rail width.
-                contour_point_world_arr[0] = (
-                    spline_point_world_arr[0] + self.width * side / 2
-                )
-                contour_point_image_arr: np.ndarray = camera.world_to_pixel(
-                    contour_point_world_arr
-                )
-                # Round coordinate because it represents discrete pixels
-                contour_point_image_arr = np.rint(contour_point_image_arr).astype(int)
-                contour_point: RailPoint
-                contour_point = RailPoint(
-                    contour_point_image_arr[0], contour_point_image_arr[1]
-                )
+                contour_point = self._contour_point(camera, spline_point, side)
                 if side == -1:
                     contour_points_left.append(contour_point)
                 else:
@@ -129,7 +141,8 @@ class Rail:
         elif contour_side == "right":
             return contour_points_right
         else:
-            msg = f"Expected parameter side to be in ['left', 'rigt', 'both'], got '{contour_side}'"
+            msg = f"Expected parameter side to be in ['left', 'rigt', 'both'],"
+            msg += f" got '{contour_side}'"
             raise ValueError(msg)
 
     def add_mark(self, mark: RailPoint) -> None:
