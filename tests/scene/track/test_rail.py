@@ -1,20 +1,28 @@
 import unittest
+from unittest import TestCase
+from unittest.mock import MagicMock, Mock, patch
+import numpy as np
+
 from src.scene.track import RailPoint, Rail
 
 
-class TestRailPoint(unittest.TestCase):
+class TestRailPoint(TestCase):
     def test_p_x(self) -> None:
         """
         Assert RailPoint is sortable.
         """
         with self.subTest(msg="Sortable rail points"):
-            rail_point_a = RailPoint(5, 10)
-            rail_point_b = RailPoint(20, 15)
-            rail_point_c = RailPoint(2.5, 5.2)
+            rail_point_a: RailPoint = RailPoint(5, 10)
+            rail_point_b: RailPoint = RailPoint(20, 15)
+            rail_point_c: RailPoint = RailPoint(2.5, 5.2)
 
+            un_sorted_a: list[RailPoint]
             un_sorted_a = [rail_point_a, rail_point_b, rail_point_c]
+            un_sorted_b: list[RailPoint]
             un_sorted_b = [rail_point_c, rail_point_b, rail_point_a]
+            un_sorted_a: list[RailPoint]
             un_sorted_c = [rail_point_b, rail_point_c, rail_point_a]
+            _sorted: list[RailPoint]
             _sorted = [rail_point_c, rail_point_a, rail_point_b]
 
             assert _sorted == sorted(un_sorted_a)
@@ -22,14 +30,14 @@ class TestRailPoint(unittest.TestCase):
             assert _sorted == sorted(un_sorted_c)
 
 
-class TestRail(unittest.TestCase):
+class TestRail(TestCase):
     def test_p_width(self) -> None:
         """
         Assert Rail.width property.
         """
         with self.subTest(msg="Return correct property"):
             width: float = 23.5
-            rail = Rail(width)
+            rail: Rail = Rail(width)
 
             assert rail.width == width
 
@@ -40,12 +48,12 @@ class TestRail(unittest.TestCase):
         with self.subTest(msg="Return correct and sorted property"):
             width: float = 23.5
 
-            mark_a = RailPoint(5, 10)
-            mark_b = RailPoint(20, 15)
-            mark_c = RailPoint(2.5, 5.2)
-            marks = [mark_a, mark_b, mark_c]
+            mark_a: RailPoint = RailPoint(5, 10)
+            mark_b: RailPoint = RailPoint(20, 15)
+            mark_c: RailPoint = RailPoint(2.5, 5.2)
+            marks: list[RailPoint] = [mark_a, mark_b, mark_c]
 
-            rail = Rail(width)
+            rail: Rail = Rail(width)
             rail.marks = marks
 
             assert rail.marks != marks  # Asserts this test is useful
@@ -59,21 +67,21 @@ class TestRail(unittest.TestCase):
             width: float = 23.5
             steps: int = 15
 
-            rail = Rail(width)
+            rail: Rail = Rail(width)
 
             assert rail.splines(steps) == []
 
         with self.subTest(msg="Amound of interpolated points"):
             width: float = 23.5
 
-            mark_a = RailPoint(2.5, 5.2)
-            mark_b = RailPoint(5, 10)
-            mark_c = RailPoint(20, 15)
-            marks = [mark_a, mark_b, mark_c]
+            mark_a: RailPoint = RailPoint(2.5, 5.2)
+            mark_b: RailPoint = RailPoint(5, 10)
+            mark_c: RailPoint = RailPoint(20, 15)
+            marks: list[RailPoint] = [mark_a, mark_b, mark_c]
 
-            rail = Rail(width)
+            rail: Rail = Rail(width)
             rail.marks = marks
-            splines = rail.splines(15)
+            splines: list[RailPoint] = rail.splines(15)
 
             assert len(splines) == 15 * len(marks)
 
@@ -84,11 +92,12 @@ class TestRail(unittest.TestCase):
         with self.subTest(msg="Add property correctly"):
             width: float = 23.5
 
-            mark_a = RailPoint(2.5, 5.2)
-            mark_b = RailPoint(5, 10)
-            mark_c = RailPoint(20, 15)
-            marks = [mark_a, mark_b, mark_c]
-            rail = Rail(width)
+            mark_a: RailPoint = RailPoint(2.5, 5.2)
+            mark_b: RailPoint = RailPoint(5, 10)
+            mark_c: RailPoint = RailPoint(20, 15)
+            marks: list[:RailPoint] = [mark_a, mark_b, mark_c]
+            rail: Rail = Rail(width)
+            mark: RailPoint
             [rail.add_mark(mark) for mark in marks]
 
             assert rail.marks[-1] == mark_c
@@ -100,11 +109,12 @@ class TestRail(unittest.TestCase):
         with self.subTest(msg="Delete nearest RailPoint"):
             width: float = 23.5
 
-            mark_a = RailPoint(2.5, 5.2)
-            mark_b = RailPoint(5, 10)
-            mark_c = RailPoint(20, 15)
-            marks = [mark_a, mark_b, mark_c]
-            rail = Rail(width)
+            mark_a: RailPoint = RailPoint(2.5, 5.2)
+            mark_b: RailPoint = RailPoint(5, 10)
+            mark_c: RailPoint = RailPoint(20, 15)
+            marks: list[RailPoint] = [mark_a, mark_b, mark_c]
+            rail: Rail = Rail(width)
+            mark: RailPoint
             [rail.add_mark(mark) for mark in marks]
             rail.del_mark(RailPoint(4, 9))
 
@@ -117,10 +127,10 @@ class TestRail(unittest.TestCase):
         with self.subTest(msg="Return correct dict"):
             width: float = 23.5
 
-            mark_a = RailPoint(3, 5)
-            mark_b = RailPoint(5, 10)
-            mark_c = RailPoint(20, 15)
-            marks = [mark_a, mark_b, mark_c]
+            mark_a: RailPoint = RailPoint(3, 5)
+            mark_b: RailPoint = RailPoint(5, 10)
+            mark_c: RailPoint = RailPoint(20, 15)
+            marks: list[RailPoint] = [mark_a, mark_b, mark_c]
 
             rail = Rail(width)
             rail.marks = marks
@@ -128,3 +138,78 @@ class TestRail(unittest.TestCase):
             rail_dict = {"points": [[3, 5], [5, 10], [20, 15]]}
 
             assert rail.to_dict() == rail_dict
+
+    def test_m__contour_point(self) -> None:
+        """
+        Assert Rail._contour_point methode.
+        """
+        world_point: np.ndarray = np.array([10, 15, 30])
+        image_point: np.ndarray = np.array([13, 17])
+        camera_mock = MagicMock()
+        camera_mock.pixel_to_world = Mock(return_value=world_point)
+        camera_mock.world_to_pixel = Mock(return_value=image_point)
+
+        width: float = 2.7
+        spline_a: RailPoint = RailPoint(3, 7)
+        rail: Rail = Rail(width)
+
+        with self.subTest(msg="Left contour point"):
+            contour_point = rail._contour_point(camera_mock, spline_a, -1)
+            np.testing.assert_array_equal(
+                np.array([3, 7]),
+                camera_mock.pixel_to_world.call_args[0][0],
+            )
+            calculated_world_point = world_point
+
+            # Half rail width to the left (x-axis)
+            calculated_world_point[0] = calculated_world_point[0] - width / 2
+            np.testing.assert_array_equal(
+                np.array(calculated_world_point),
+                camera_mock.world_to_pixel.call_args[0][0],
+            )
+
+            # Assert contour point is nearest integer
+            round_image_point = np.rint(image_point).astype(int)
+            assert contour_point.x == round_image_point[0].item()
+            assert contour_point.y == round_image_point[1].item()
+
+        with self.subTest(msg="Right contour point"):
+            contour_point = rail._contour_point(camera_mock, spline_a, 1)
+            np.testing.assert_array_equal(
+                np.array([3, 7]),
+                camera_mock.pixel_to_world.call_args[0][0],
+            )
+            calculated_world_point = world_point
+
+            # Half rail width to the left (x-axis)
+            calculated_world_point[0] = calculated_world_point[0] + width / 2
+            np.testing.assert_array_equal(
+                np.array(calculated_world_point),
+                camera_mock.world_to_pixel.call_args[0][0],
+            )
+
+            # Assert contour point is nearest integer
+            round_image_point = np.rint(image_point).astype(int)
+            assert contour_point.x == round_image_point[0].item()
+            assert contour_point.y == round_image_point[1].item()
+
+    @unittest.skip
+    def test_m_contour_points(self) -> None:
+        """
+        Assert Rail.contour_points methode.
+        """
+        world_point: np.ndarray = np.array([10, 15, 30])
+        image_point: np.ndarray = np.array([13, 17])
+        camera_mock = MagicMock()
+        camera_mock.pixel_to_world = Mock(return_value=world_point)
+        camera_mock.world_to_pixel = Mock(return_value=image_point)
+
+        contour_point = Mock(return_value=RailPoint(25, 17))
+
+        width: float = 2.7
+        spline_steps: int = 15
+        spline_a: RailPoint = RailPoint(3, 7)
+        rail: Rail = Rail(width)
+
+        with self.subTest(msg="Left contour only"):
+            pass
