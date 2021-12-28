@@ -1,27 +1,7 @@
-from __future__ import annotations
-from typing import Union
-import numpy
 import splines
 import numpy as np
-from scene.point import ImagePoint
 from scene.camera.camera import Camera
-
-
-class RailPoint(ImagePoint):
-    """
-    Represent point on rail.
-    """
-
-    def __init__(self, x: Union[int, float], y: Union[int, float]):
-        super().__init__(x, y)
-
-    def __lt__(self, other: RailPoint) -> bool:
-        """
-        One rail point is less than the other if it has a larger
-        y-axis value, i.e. it is closer to the observer.
-        :param other: Other rail point.
-        """
-        return self.y < other.y
+from scene.track.rail_point import RailPoint
 
 
 class Rail:
@@ -63,7 +43,7 @@ class Rail:
             sp: splines.CatmullRom
             sp = splines.CatmullRom(mark_points_arr, endconditions="natural")
             total_duration: int = sp.grid[-1] - sp.grid[0]
-            t: numpy.ndarray
+            t: np.ndarray
             t = np.linspace(0, total_duration, len(mark_points_arr) * steps)
             splines_arr: np.ndarray
             splines_arr = sp.evaluate(t)

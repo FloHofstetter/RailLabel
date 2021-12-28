@@ -2,8 +2,8 @@ import unittest
 from unittest import TestCase
 from unittest.mock import MagicMock, Mock, patch
 import numpy as np
-
-from src.scene.track import RailPoint, Rail
+from src.scene.track.rail import Rail
+from src.scene.track.rail_point import RailPoint
 
 
 class TestRailPoint(TestCase):
