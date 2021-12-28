@@ -141,7 +141,7 @@ class Rail:
         elif contour_side == "right":
             return contour_points_right
         else:
-            msg = f"Expected parameter side to be in ['left', 'rigt', 'both'],"
+            msg = f"Expected parameter side to be in ['left', 'right', 'both'],"
             msg += f" got '{contour_side}'"
             raise ValueError(msg)
 
