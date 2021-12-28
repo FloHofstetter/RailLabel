@@ -16,6 +16,12 @@ class ImagePoint:
         self._point: np.ndarray
         self._point = np.rint(np.array([x, y])).astype(int)
 
+    def __eq__(self, other: ImagePoint) -> bool:
+        if self.x == other.x and self.y == other.y:
+            return True
+        else:
+            return False
+
     def __str__(self) -> str:
         msg: str = f"x={self.x} y={self.y}"
         return msg
@@ -64,6 +70,12 @@ class WorldPoint(ImagePoint):
         super().__init__(x, y)
         z: int = np.rint(z).astype(int).item()
         self._point = np.append(self._point, z)
+
+    def __eq__(self, other: WorldPoint) -> bool:
+        if self.x == other.x and self.y == other.y and self.z == other.z:
+            return True
+        else:
+            return False
 
     def __str__(self) -> str:
         msg: str = f"x={self.x} y={self.y} z={self.z}"

@@ -75,6 +75,19 @@ class TestImagePoint(unittest.TestCase):
         string_representation = f"x={x} y={y}"
         self.assertEqual(str(image_point), string_representation)
 
+    def test_m___equ__(self) -> None:
+        """
+        Assert correct equivalency two ImagePoints.
+        """
+        x: int = 5
+        y: int = 10
+        image_point_a: ImagePoint = ImagePoint(x, y)
+        image_point_b: ImagePoint = ImagePoint(y, x)
+        image_point_c: ImagePoint = ImagePoint(x, y)
+
+        assert image_point_a != image_point_b
+        assert image_point_a == image_point_c
+
 
 class TestWorldPoint(unittest.TestCase):
     def test_p_x(self) -> None:
@@ -175,3 +188,17 @@ class TestWorldPoint(unittest.TestCase):
 
         string_representation = f"x={x} y={y} z={z}"
         self.assertEqual(str(world_point), string_representation)
+
+    def test_m___equ__(self) -> None:
+        """
+        Assert correct equivalency two WorldPoints.
+        """
+        x: int = 5
+        y: int = 10
+        z: int = 15
+        world_point_a: WorldPoint = WorldPoint(x, y, z)
+        world_point_b: WorldPoint = WorldPoint(z, x, y)
+        world_point_c: WorldPoint = WorldPoint(x, y, z)
+
+        assert world_point_a != world_point_b
+        assert world_point_a == world_point_c
