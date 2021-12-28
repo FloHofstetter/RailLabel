@@ -229,7 +229,7 @@ class TestRail(TestCase):
                 RailPoint(10, 12),
             ]
 
-        with self.subTest(msg="Left contour only"):
+        with self.subTest(msg="Both contours"):
             contour_points = rail.contour_points(camera_mock, steps, "both")
             assert contour_points == [
                 RailPoint(10, 12),
