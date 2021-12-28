@@ -193,23 +193,53 @@ class TestRail(TestCase):
             assert contour_point.x == round_image_point[0].item()
             assert contour_point.y == round_image_point[1].item()
 
-    @unittest.skip
-    def test_m_contour_points(self) -> None:
+    @patch.object(Rail, "_contour_point")
+    @patch.object(Rail, "splines")
+    def test_m_contour_point(self, m_splines, m__contour_point) -> None:
         """
         Assert Rail.contour_points methode.
         """
-        world_point: np.ndarray = np.array([10, 15, 30])
-        image_point: np.ndarray = np.array([13, 17])
-        camera_mock = MagicMock()
-        camera_mock.pixel_to_world = Mock(return_value=world_point)
-        camera_mock.world_to_pixel = Mock(return_value=image_point)
-
-        contour_point = Mock(return_value=RailPoint(25, 17))
-
         width: float = 2.7
-        spline_steps: int = 15
-        spline_a: RailPoint = RailPoint(3, 7)
+        steps: int = 5
         rail: Rail = Rail(width)
 
+        camera_mock: MagicMock = MagicMock()
+        splines_side_effect: list[RailPoint] = [
+            RailPoint(14, 18),
+            RailPoint(15, 11),
+            RailPoint(23, 26),
+        ]
+
+        m_splines.return_value = splines_side_effect
+        m__contour_point.return_value = RailPoint(10, 12)
+
         with self.subTest(msg="Left contour only"):
-            pass
+            contour_points = rail.contour_points(camera_mock, steps, "left")
+            assert contour_points == [
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+            ]
+
+        with self.subTest(msg="Right contour only"):
+            contour_points = rail.contour_points(camera_mock, steps, "right")
+            assert contour_points == [
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+            ]
+
+        with self.subTest(msg="Left contour only"):
+            contour_points = rail.contour_points(camera_mock, steps, "both")
+            assert contour_points == [
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+                RailPoint(10, 12),
+            ]
+
+        with self.subTest(msg="False side Exception"):
+            with self.assertRaises(ValueError):
+                rail.contour_points(camera_mock, steps, "a")
