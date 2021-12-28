@@ -50,9 +50,11 @@ class Rail:
             # Round splines because it represents discrete pixels
             splines_arr = np.rint(splines_arr).astype(int)
             spline_arr: np.array
-            spline_points = [
-                RailPoint(spline_arr[0], spline_arr[1]) for spline_arr in splines_arr
-            ]
+            spline_points = []
+            for spline_arr in splines_arr:
+                spline_point: RailPoint
+                spline_point = RailPoint(spline_arr[0].item(), spline_arr[1].item())
+                spline_points.append(spline_point)
             return spline_points
         else:
             return []
@@ -81,8 +83,8 @@ class Rail:
         contour_point_image_arr = np.rint(contour_point_image_arr).astype(int)
         contour_point: RailPoint
         contour_point = RailPoint(
-            contour_point_image_arr[0],
-            contour_point_image_arr[1],
+            contour_point_image_arr[0].item(),
+            contour_point_image_arr[1].item(),
         )
         return contour_point
 

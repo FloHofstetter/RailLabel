@@ -1,8 +1,10 @@
 from __future__ import annotations
+from typeguard import typechecked
 from typing import Union
 import numpy as np
 
 
+@typechecked
 class ImagePoint:
     """
     Represents a point in image coordinates aka. pixel coordinates.
@@ -46,7 +48,7 @@ class ImagePoint:
         """
         mean: np.ndarray = np.mean((self._point, other._point), axis=0)
         # Pixels are discrete values
-        mean: np.ndarray = np.rint(mean).astype(int)
+        mean: list[int] = np.rint(mean).astype(int).tolist()
         midpoint: ImagePoint = self.__class__(*mean)
         return midpoint
 
